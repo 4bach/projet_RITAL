@@ -1,5 +1,7 @@
 import re
-import Document 
+from Document import Document 
+
+
 class Parser:
     
     def buildDocCollectionSimple(self,fichier):
@@ -15,7 +17,7 @@ class Parser:
             if inT:
                 if l.startswith("."):
                     inT = False
-                    d.setText(text)
+                    d.setTexte(text)
                     resultat[lireID[:-1]] = d
                     lireID = ""
                 else:
@@ -52,10 +54,10 @@ class Parser:
             d.setID(int(id_doc))
             m = re.search(r'\.T(.*?)\.',docs[di],re.DOTALL)
             if m != None:
-                d.setText( m.group(1).replace('\n',' '))
+                d.setTexte( m.group(1).replace('\n',' '))
                 
             else:
-                d.setText("")
+                d.setTexte("")
             
             resultat[id_doc]= d
         f.close()

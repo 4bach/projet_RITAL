@@ -3,6 +3,7 @@ class Document:
     def __init__(self):
         self.identifiant = -1 
         self.texte = ""
+        
     
     def setID(self,identifiant):
         
