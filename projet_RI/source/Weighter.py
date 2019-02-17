@@ -10,3 +10,5 @@ class Weighter:
         self.auteur = "Yannis et seulement Yannis"
         self.indexer = indexer
         
+    
+        
