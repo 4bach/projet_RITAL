@@ -155,6 +155,7 @@ def evaluation_modele_vectoriel(D,qry):
     
     
     
+print("evaluation_modele_vectoriel",end=" : ")
 print(evaluation_modele_vectoriel(D,"home sales top"))
     
 

@@ -6,8 +6,8 @@ Created on Thu Feb  7 17:58:38 2019
 @author: ykarmim
 """
 from collections import Counter
+from TextRepresenter import PorterStemmer
 import math
-import porter 
 
 
 class IndexerSimple:
@@ -36,9 +36,34 @@ class IndexerSimple:
     
     def setTf(self,tf):
         self.tf = tf
+        
     
-    def countWord(self,doc):
-        return dict(Counter([porter.stem(i.lower()) for i in doc.split() if i.lower() not in IndexerSimple.motvide]))
+    def getTfsForDoc(self,iddoc):
+        return self.index[iddoc]
+        
+    
+    def getTfIDFsForDoc(self,ind):
+        return self.tf_idf[ind]
+    
+    def getTfsForStem(self,ind):
+        return self.index_inv[ind]
+    
+    def getTfIDFsForStem(self,stem):
+        dico = dict()
+        for iddoc in self.index_inv[stem].keys():
+            dico[iddoc] = self.tf_idf[int(iddoc)][stem]
+        
+        return dico
+    
+    def getStrDoc(self,iddoc):
+        return self.collection[iddoc].getTexte()
+    
+    def getNbDoc(self):
+        return len(self.index)
+    
+    def countWord(doc):
+        ps = PorterStemmer()
+        return dict(Counter([i for i in ps.getTextRepresentation(doc)]))
     
     def indexation(self,collection):
         self.collection = collection
@@ -48,7 +73,7 @@ class IndexerSimple:
         tf_idf = dict()
         tf = dict()
         for i in range(len(collection)):            
-            index[collection[i].getId()] = IndexerSimple.countWord(collection[i].getTexte())
+            index[collection[str(i+1)].getID()-1] = IndexerSimple.countWord(collection[str(i+1)].getTexte())
             for j in index[i]:
                 if j in index_inv:
                     index_inv[j][str(i)] = str(index[i][j])
@@ -66,25 +91,5 @@ class IndexerSimple:
         self.setTf(tf)
         self.setTf_idf(tf_idf)
         
-    
-    
-    def getTfsForDoc(self,iddoc):
-        return self.index[iddoc]
-        
-    
-    def getTfIDFsForDoc(self,ind):
-        return self.tf_idf[ind]
-    
-    def getTfsForStem(self,ind):
-        return self.index_inv[ind]
-    
-    def getTfIDFsForStem(self,stem):
-        dico = dict()
-        for iddoc in self.index_inv[stem].keys():
-            dico[iddoc] = self.tf_idf[iddoc][stem]
-        
-        return dico
-    
-    def getStrDoc(self,iddoc):
-        return self.collection[iddoc].getTexte()
+
             

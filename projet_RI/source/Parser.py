@@ -4,7 +4,7 @@ from Document import Document
 
 class Parser:
     
-    def buildDocCollectionSimple(self,fichier):
+    def buildDocCollectionSimple(fichier):
     
         resultat = dict()
         lireID = ""
