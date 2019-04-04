@@ -10,7 +10,7 @@ from IRModel import Vectoriel
 
 from Parser import Parser
 
-qry = "of the Use of Computers in Inspection"
+qry = "Computer science book and machine"
 
 if __name__=="__main__":
     D = Parser.buildDocCollectionSimple('/users/Etu3/3414093/Cours/M1S2/projet_RITAL/projet_RI/cacmShort-good.txt')
@@ -18,18 +18,24 @@ if __name__=="__main__":
     indexer.indexation(D)
     w1 = Weighter1(indexer) 
     t=w1.getWeightsForQuery(qry)
-    print(t)
+    print("w1: ",t)
     w2 = Weighter2(indexer) 
     t2=w2.getWeightsForQuery(qry)
-    print(t2)
+    print("w2: ",t2)
     w3 = Weighter3(indexer) 
     t3=w3.getWeightsForQuery(qry)
-    print(t3)
+    print("w3: ",t3)
 
     v1 = Vectoriel(w1)
     s1 = v1.getScores(qry)
-    print(s1)   
+    print("s1:",s1)   
+    
+    v2 = Vectoriel(w2)
+    s2 = v1.getScores(qry)
+    print("s2:",s2)   
     
     v3 = Vectoriel(w3)
     s3 = v3.getScores(qry)
-    print(s3)
+    sort = v3.getRanking(qry)
+    
+    print("s3:",s3)
