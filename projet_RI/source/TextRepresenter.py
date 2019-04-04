@@ -8,7 +8,7 @@ Created on 5 sept. 2016
 
 import re
 from collections import Counter
-import porter
+import utils.porter
 #from utils.porter import porter
 
 
@@ -44,7 +44,7 @@ class PorterStemmer(TextRepresenter):
         
         ret=Counter(tab)
         
-        ret={porter.stem(a):b for (a,b) in ret.items()  if a not in self.stopWords}
+        ret={utils.porter.stem(a):b for (a,b) in ret.items()  if a not in self.stopWords}
         return ret
 
         
