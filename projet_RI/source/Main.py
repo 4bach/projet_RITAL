@@ -10,7 +10,7 @@ from IRModel import Vectoriel
 
 from Parser import Parser
 
-qry = "Computer science book and machine"
+qry = "Computers in Inspection Procedures Science"
 
 if __name__=="__main__":
     D = Parser.buildDocCollectionSimple('/users/Etu3/3414093/Cours/M1S2/projet_RITAL/projet_RI/cacmShort-good.txt')

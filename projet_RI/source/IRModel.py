@@ -27,14 +27,14 @@ class Vectoriel(IRModel):
         Y = []
         #print("nbdoc : ",self.weighter.getNbDoc())
         for doc in range(self.weighter.getNbDoc()):
-            score[doc]=0
+            score[doc+1]=0
         for mot in query:
             for docu in self.weighter.getWeightsForStem(mot):
                 
                 y = float(self.weighter.getWeightsForStem(mot)[docu])
                 Y.append(y)
-                print(int(docu))
-                score[int(docu)]+=(query[mot]*y)
+                
+                score[int(docu)+1]+=(query[mot]*y)
         
         if normalized:
             return 

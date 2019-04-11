@@ -46,6 +46,8 @@ class IndexerSimple:
         return self.tf_idf[ind]
     
     def getTfsForStem(self,ind):
+        if ind not in self.index_inv:
+            return []
         return self.index_inv[ind]
     
     def getTfIDFsForStem(self,stem):
