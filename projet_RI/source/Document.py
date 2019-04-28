@@ -1,24 +1,23 @@
 
 class Document:
+    """
+    Une classe Document qui nous sert a stocker des documents,
+    C'est a dire un ID et un texte
+    """
+
     def __init__(self):
         self.identifiant = -1 
         self.texte = ""
-        
     
-    def setID(self,identifiant):
+    def setID(self, identifiant):
         
         self.identifiant = identifiant
     
     def getID(self):
-        return self.identifiant 
-        
+        return self.identifiant
     
-    def setTexte(self,texte):
+    def setTexte(self, texte):
         self.texte = texte
-        
-        
+
     def getTexte(self):
         return self.texte
-    
-    
-    
