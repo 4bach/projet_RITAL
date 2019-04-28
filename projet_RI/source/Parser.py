@@ -51,28 +51,37 @@ class Parser:
         f.close()
         return resultat
 
-    
+    def buildDocumentCollectionRegex(fichier):
+        """
+            Construit l'index a partir d'une base de documents contenus dans fichier,
+        On lit le fichier en entier et on utilise des expressions régulières pour
+        récupère le contenu des balises
 
-    def buildDocumentCollectionRegex(self):
-        
+        :type fichier: String
+        :param fichier: Le fichier qui contient les documents que l'on veut indexé
+
+        :return: Un dictionnaire de d'object Document, dont les clef sont les id des
+                Document.
+                {"id1": Document1, "id2": Document2, ...}
+        """
         resultat = dict()
         
-        f = open(self.file,'r')
+        f = open(fichier, 'r')
         doc = f.read()
         docs = doc.split(".I")
     
-        for di in range(1,len(docs)):  
+        for di in range(1, len(docs)):
             d = Document()
-            id_doc = re.search(r'(\d*|$)',docs[di][1:]).group(0)
+            id_doc = re.search(r'(\d*|$)', docs[di][1:]).group(0)
             d.setID(int(id_doc))
-            m = re.search(r'\.T(.*?)\.',docs[di],re.DOTALL)
-            if m != None:
-                d.setTexte( m.group(1).replace('\n',' '))
+            m = re.search(r'\.T(.*?)\.', docs[di], re.DOTALL)
+            if m is not None:
+                d.setTexte(m.group(1).replace('\n', ' '))
                 
             else:
                 d.setTexte("")
             
-            resultat[id_doc]= d
+            resultat[id_doc] = d
         f.close()
         return resultat
         
