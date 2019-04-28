@@ -13,7 +13,8 @@ from Parser import Parser
 qry = "Computers in Inspection Procedures Science"
 
 if __name__=="__main__":
-    D = Parser.buildDocCollectionSimple('/users/Etu3/3414093/Cours/M1S2/projet_RITAL/projet_RI/cacmShort-good.txt')
+    D = Parser.buildDocCollectionSimple('../cacmShort-good.txt')
+    print(D)
     indexer = IndexerSimple()
     indexer.indexation(D)
     w1 = Weighter1(indexer) 
