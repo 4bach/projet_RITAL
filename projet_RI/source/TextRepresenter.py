@@ -9,7 +9,9 @@ Created on 5 sept. 2016
 import re
 from collections import Counter
 import porter
-#from utils.porter import porter
+
+
+# from utils.porter import porter
 
 
 class TextRepresenter(object):
@@ -17,37 +19,34 @@ class TextRepresenter(object):
     classdocs
     '''
 
-
     def __init__(self):
         '''
         Constructor
         '''
-        
-    def getTextRepresentation(self,text):
+
+    def getTextRepresentation(self, text):
         raise NotImplementedError
-    
 
 
 class PorterStemmer(TextRepresenter):
-    
+
     def __init__(self):
         '''
         Constructor
         '''
-        self.stopWords=set()
+        self.stopWords = set()
         self._setStopWords()
-        
-    def getTextRepresentation(self,text):
-        tab=re.findall(r"\w+",text,re.UNICODE)
-        
-        tab=[i.lower() for i in tab]
-        
-        ret=Counter(tab)
-        
-        ret={porter.stem(a):b for (a,b) in ret.items()  if a not in self.stopWords}
-        return ret
 
-        
+    def getTextRepresentation(self, text):
+
+        mots = re.findall(r"\w+", text, re.UNICODE)  # On recupére une liste tous les mots du texte
+        mots = [i.lower() for i in mots]  # On met tous les mots en minuscule
+
+        compte_mots = Counter(mots)
+        resultat = {porter.stem(a): b for (a, b) in compte_mots.items() if a not in self.stopWords}
+
+        return resultat
+
     def _setStopWords(self):
         self.stopWords.add("a");
         self.stopWords.add("able");
@@ -611,5 +610,3 @@ class PorterStemmer(TextRepresenter):
         self.stopWords.add("gt");
         self.stopWords.add("section");
         self.stopWords.add("cx");
-   
-

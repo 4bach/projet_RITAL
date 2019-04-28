@@ -1,7 +1,7 @@
 
 class Document:
     """
-    Une classe Document qui nous sert a stocker des documents,
+    Une classe Document qui nous sert a stocker un document,
     C'est a dire un ID et un texte
     """
 
