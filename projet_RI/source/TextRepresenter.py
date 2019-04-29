@@ -15,14 +15,14 @@ import porter
 
 
 class TextRepresenter(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
 
     def getTextRepresentation(self, text):
         raise NotImplementedError
@@ -31,14 +31,22 @@ class TextRepresenter(object):
 class PorterStemmer(TextRepresenter):
 
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         self.stopWords = set()
         self._setStopWords()
 
     def getTextRepresentation(self, text):
+        """
+            Permet d'obtenir une représentation d'un texte, On va connaitre le nombre de tous les mots présents dans
+        le texte, mot vide exclu
 
+        :type text: String
+        :param text: Le texte dont on veux avoir la representation
+        :return: un dictionnaire qui reprensente texte, c'est a dire que les mots sont lemmatisé et compté par occurence
+                {mot1 : n1, mot2 : n2, ...}
+        """
         mots = re.findall(r"\w+", text, re.UNICODE)  # On recupére une liste tous les mots du texte
         mots = [i.lower() for i in mots]  # On met tous les mots en minuscule
 
