@@ -83,6 +83,8 @@ class IndexerSimple:
 
         for i in index:
             taille = len(index[i])
+            taille = sum([index[i][n] for n in index[i]])
+
             tf[i] = {mot: (index[i][mot] / taille) for mot in index[i]}
             tf_idf[i] = {mot: (index[i][mot] / taille) * math.log((1 + len(collection)) / (1 + len(index_inv[mot]))) for
                          mot in index[i]}
