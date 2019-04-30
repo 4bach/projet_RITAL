@@ -5,9 +5,8 @@ Created on Thu Feb  7 17:58:38 2019
 
 @author: ykarmim
 """
-from collections import Counter
 import math
-from TextRepresenter import PorterStemmer
+import TextRepresenter
 
 
 class IndexerSimple:
@@ -39,10 +38,12 @@ class IndexerSimple:
 
     def getTfsForStem(self, stem):
         if stem not in self.index_inv:
-            return []
+            return dict()
         return {i: self.tf[i][stem] for i in self.index_inv[stem]}
 
     def getTfIDFsForStem(self, stem):
+        if stem not in self.index_inv:
+            return dict()
         dico = dict()
         for iddoc in self.index_inv[stem].keys():
             dico[iddoc] = self.tf_idf[int(iddoc)][stem]
@@ -64,7 +65,7 @@ class IndexerSimple:
         :param doc: le document que dont on veux la representation
         :return: un dictionnaire qui reprensente le doc
         """
-        return PorterStemmer().getTextRepresentation(doc)
+        return TextRepresenter.PorterStemmer().getTextRepresentation(doc)
 
     def indexation(self, collection):
         self.collection = collection
