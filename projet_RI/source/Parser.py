@@ -19,7 +19,7 @@ class Parser:
         """
 
         resultat = dict()
-        lireID = ""
+        lireID = -1
         text = ""
         inT = False  # Boolean qui nous indique si l'on est dans une balise texte
         d = Document()
@@ -31,22 +31,22 @@ class Parser:
                 if l.startswith("."):  # Et Si la ligne courante commence par un .
                     inT = False                # Alors cela signifie que l'on sort de la texte
                     d.setTexte(text)           # On va ajouter le texte que l'on a trouver dans notre document
-                    resultat[lireID[:-1]] = d  # On ajoute notre document a notre dictionnaire resultat
-                    lireID = ""
+                    resultat[lireID] = d  # On ajoute notre document a notre dictionnaire resultat
+                    lireID = -1
 
                 else:                  # Sinon, c'est que l'on toujour dans notre balise texte
                     text = text + l 
                 
-            if len(lireID) > 0:  # Si a deja lu une balise id, mais pas encore de balise texte
+            if lireID > 0:  # Si a deja lu une balise id, mais pas encore de balise texte
                 if l.startswith(".T"):  # Et que la ligne courante commence par un .T
                     inT = True  # alors on est dans une balise texte
                     text = ""
                 
             if l[:2] == ".I":  # Si on a pas vue de balise id et que la ligne courante commence par .I
-                lireID = l[3:]
+                lireID = int(l[3:])
                 d = Document()  # On cree un nouveau document
-                d.setID(int(lireID))  # Auquel on lui donne son id
-                resultat[lireID[:-1]] = ""
+                d.setID(lireID)  # Auquel on lui donne son id
+                resultat[lireID] = ""
 
         f.close()
         return resultat

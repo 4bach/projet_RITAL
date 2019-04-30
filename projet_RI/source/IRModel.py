@@ -16,27 +16,29 @@ class IRModel:
     
 class Vectoriel(IRModel):
     
-    def __init__(self,weighter):
+    def __init__(self, weighter, normalized):
         super().__init__(weighter)
+        self.normalized = normalized
                         
-    def getScores(self,query,normalized=False):
+    def getScores(self, query):
         
         query = self.weighter.getWeightsForQuery(query)
+        print('query =',query)
         
         score = dict()
         Y = []
-        #print("nbdoc : ",self.weighter.getNbDoc())
+        # print("nbdoc : ",self.weighter.getNbDoc())
         for doc in range(self.weighter.getNbDoc()):
-            score[doc+1]=0
+            score[doc+1] = 0
         for mot in query:
             for docu in self.weighter.getWeightsForStem(mot):
                 
                 y = float(self.weighter.getWeightsForStem(mot)[docu])
                 Y.append(y)
                 
-                score[int(docu)+1]+=(query[mot]*y)
+                score[int(docu)+1] += (query[mot]*y)
         
-        if normalized:
+        if self.normalized:
             return 
         else:
             return score

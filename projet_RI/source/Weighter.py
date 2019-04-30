@@ -63,7 +63,7 @@ class Weighter1(Weighter):
             score[i]=0
             for j in qry:
                 if j in self.indexer.getTfsForDoc(i):
-                    score[i]+=1
+                    score[i]+=  1
             if len(qry)==score[i]:
                 score[i] = 1 
             else:

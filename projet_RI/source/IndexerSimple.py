@@ -73,13 +73,13 @@ class IndexerSimple:
         index_inv = dict()
         tf_idf = dict()
         tf = dict()
-        for i in range(len(collection)):
-            index[collection[str(i + 1)].getID() - 1] = IndexerSimple.countWord(collection[str(i + 1)].getTexte())
-            for j in index[i]:
+        for id in collection:
+            index[collection[id].getID()] = IndexerSimple.countWord(collection[id].getTexte())
+            for j in index[id]:
                 if j in index_inv:
-                    index_inv[j][i] = index[i][j]
+                    index_inv[j][id] = index[id][j]
                 else:
-                    index_inv[j] = {i: index[i][j]}
+                    index_inv[j] = {id: index[id][j]}
 
         for i in index:
             taille = len(index[i])

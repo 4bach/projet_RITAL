@@ -11,9 +11,6 @@ from collections import Counter
 import porter
 
 
-# from utils.porter import porter
-
-
 class TextRepresenter(object):
     """
     classdocs
