@@ -32,15 +32,15 @@ class IndexerSimple:
         self.tf = tf
 
     def getTfsForDoc(self, iddoc):
-        return self.index[iddoc]
+        return self.tf[iddoc]
 
     def getTfIDFsForDoc(self, ind):
         return self.tf_idf[ind]
 
-    def getTfsForStem(self, ind):
-        if ind not in self.index_inv:
+    def getTfsForStem(self, stem):
+        if stem not in self.index_inv:
             return []
-        return self.index_inv[ind]
+        return {i: self.tf[i][stem] for i in self.index_inv[stem]}
 
     def getTfIDFsForStem(self, stem):
         dico = dict()
@@ -54,8 +54,17 @@ class IndexerSimple:
     def getNbDoc(self):
         return len(self.index)
 
+    @staticmethod
     def countWord(doc):
-        return dict(Counter([i for i in PorterStemmer().getTextRepresentation(doc)]))
+        """
+            On fait appel a la methode getTextRepresentation qui nous donne la representation d'un doc, et qui compte
+        le nombre d'occurence de charque mot lemmatisé
+
+        :type doc: String
+        :param doc: le document que dont on veux la representation
+        :return: un dictionnaire qui reprensente le doc
+        """
+        return PorterStemmer().getTextRepresentation(doc)
 
     def indexation(self, collection):
         self.collection = collection
@@ -68,9 +77,9 @@ class IndexerSimple:
             index[collection[str(i + 1)].getID() - 1] = IndexerSimple.countWord(collection[str(i + 1)].getTexte())
             for j in index[i]:
                 if j in index_inv:
-                    index_inv[j][str(i)] = str(index[i][j])
+                    index_inv[j][i] = index[i][j]
                 else:
-                    index_inv[j] = {str(i): str(index[i][j])}
+                    index_inv[j] = {i: index[i][j]}
 
         for i in index:
             taille = len(index[i])
