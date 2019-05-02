@@ -31,7 +31,7 @@ class IndexerSimple:
         self.tf = tf
 
     def getTfsForDoc(self, iddoc):
-        return self.tf[iddoc]
+        return self.index[iddoc]
 
     def getTfIDFsForDoc(self, ind):
         return self.tf_idf[ind]
@@ -39,7 +39,8 @@ class IndexerSimple:
     def getTfsForStem(self, stem):
         if stem not in self.index_inv:
             return dict()
-        return {i: self.tf[i][stem] for i in self.index_inv[stem]}
+        return self.index_inv[stem]
+        # return {i: self.tf[i][stem] for i in self.index_inv[stem]}
 
     def getTfIDFsForStem(self, stem):
         if stem not in self.index_inv:
@@ -48,6 +49,9 @@ class IndexerSimple:
         for iddoc in self.index_inv[stem].keys():
             dico[iddoc] = self.tf_idf[int(iddoc)][stem]
         return dico
+
+    def getIdfForStem(self, stem):
+        return math.log((1 + self.getNbDoc()) / (1 + len(self.index_inv[stem])))
 
     def getStrDoc(self, iddoc):
         return self.collection[iddoc].getTexte()
@@ -83,7 +87,6 @@ class IndexerSimple:
                     index_inv[j] = {id: index[id][j]}
 
         for i in index:
-            taille = len(index[i])
             taille = sum([index[i][n] for n in index[i]])
 
             tf[i] = {mot: (index[i][mot] / taille) for mot in index[i]}

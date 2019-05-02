@@ -11,7 +11,9 @@ from IRModel import Vectoriel
 # from Weighter import Weighter3
 from TextRepresenter import PorterStemmer
 
-qry = "Computers in Inspection Procedures Science Science"
+qry = "Computers Computers in Inspection Procedures Science Science"
+
+
 
 if __name__ == "__main__":
 
@@ -49,22 +51,27 @@ if __name__ == "__main__":
     # print("w4: ", t4)
     t4 = w4.getWeightsForQuery(qry)
     # print("w4: ", t4)
+    w5 = Weighter.Weighter5(indexer_simple)
+
 
 
     v1 = Vectoriel(w1, False)
     s1 = v1.getScores(qry)
-    print("s1:",s1)
     sort = v1.getRanking(qry)
+    print("s1:",s1)
 
     for t in sort:
         print("doc:", t[0], " score:", t[1])
+    print()
+
     v2 = Vectoriel(w2, False)
-    s2 = v1.getScores(qry)
-    print("s2:",s2)
+    s2 = v2.getScores(qry)
     sort = v2.getRanking(qry)
+    print("s2:",s2)
 
     for t in sort:
         print("doc:", t[0], " score:", t[1])
+    print()
 
     v3 = Vectoriel(w3, False)
     s3 = v3.getScores(qry)
@@ -73,6 +80,7 @@ if __name__ == "__main__":
     print("s3:",s3)
     for t in sort:
         print("doc:", t[0], " score:", t[1])
+    print()
 
     v4 = Vectoriel(w4, False)
     s4 = v4.getScores(qry)
@@ -81,3 +89,13 @@ if __name__ == "__main__":
     print("s4:",s4)
     for t in sort:
         print("doc:", t[0], " score:", t[1])
+    print()
+
+    v5 = Vectoriel(w5, False)
+    s5 = v5.getScores(qry)
+    sort = v5.getRanking(qry)
+
+    print("s5:",s5)
+    for t in sort:
+        print("doc:", t[0], " score:", t[1])
+    print()

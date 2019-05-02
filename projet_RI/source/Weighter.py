@@ -14,7 +14,7 @@ class Weighter:
         return self.indexer.getTfsForDoc(idDoc)
 
     def getWeightsForStem(self, stem):
-        return self.indexer.getTfIDFsForStem(stem)
+        return self.indexer.getTfsForStem(stem)
 
     def getNbDoc(self):
         return self.indexer.getNbDoc()
@@ -49,9 +49,11 @@ class Weighter2(Weighter):
         super().__init__(indexer)
 
     def getWeightsForQuery(self, query):
-        query_rep = self.indexer.countWord(query)
-        taille_query_rep = sum([query_rep[n] for n in query_rep])
-        return {terme: (query_rep[terme]/taille_query_rep) for terme in query_rep}
+        return self.indexer.countWord(query)
+
+        # query_rep = self.indexer.countWord(query)
+        # taille_query_rep = sum([query_rep[n] for n in query_rep])
+        # return {terme: (query_rep[terme]/taille_query_rep) for terme in query_rep}
 
 
 class Weighter3(Weighter):
@@ -74,22 +76,55 @@ class Weighter3(Weighter):
 
 
 class Weighter4(Weighter):
+    """
+        quatrième schéma pour la ponderation des documents et des query.
+
+    poid doc = 1 + log(tf)
+    poid query = idf if terme in query else 0
+    """
 
     def getWeightsForDoc(self, idDoc):
         tf_doc = self.indexer.getTfsForDoc(idDoc)
         return {terme: 1 + math.log(tf_doc[terme]) for terme in tf_doc}
 
     def getWeightsForStem(self, stem):
-        tf_stem = self.indexer.getTfIDFsForStem(stem)
+        tf_stem = self.indexer.getTfsForStem(stem)
         return {terme: 1 + math.log(tf_stem[terme]) for terme in tf_stem}
+
+    def getWeightsForQuery(self, query):
+        resultat = dict()
+        for terme in self.indexer.countWord(query):
+            if terme in self.indexer.index_inv:
+                resultat[terme] = self.indexer.getIdfForStem(terme)
+        return resultat
+
+
+class Weighter5(Weighter):
+    """
+        cinquième schéma pour la ponderation des documents et des query.
+
+    poid doc = (1 + log(tf)) x idf
+    poid query = (1 + log(tf)) x idf if terme in query else 0
+    """
+
+    def getWeightsForDoc(self, idDoc):
+        tf_doc = self.indexer.getTfsForDoc(idDoc)
+        return {terme: 1 + math.log(tf_doc[terme]) * self.indexer.getIdfForStem(terme) for terme in tf_doc}
+
+    def getWeightsForStem(self, stem):
+
+        if stem not in self.indexer.index_inv:
+            return 0
+        tf_stem = self.indexer.getTfsForStem(stem)
+        return {terme: 1 + math.log(tf_stem[terme]) * self.indexer.getIdfForStem(stem) for terme in tf_stem}
 
     def getWeightsForQuery(self, query):
 
         resultat = dict()
+        tf_query = self.indexer.countWord(query)
+
         for terme in self.indexer.countWord(query):
             if terme in self.indexer.index_inv:
-                resultat[terme] = math.log((1 + self.indexer.getNbDoc()) / (1 + len(self.indexer.index_inv[terme])))
+                resultat[terme] = self.indexer.getIdfForStem(terme) * (1 + math.log(tf_query[terme]))
         return resultat
 
-class Weighter5(Weighter):
-    pass
