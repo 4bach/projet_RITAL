@@ -19,9 +19,17 @@ class Weighter:
     def getNbDoc(self):
         return self.indexer.getNbDoc()
 
+    def getLengthDoc(self, idDoc):
+        return len(self.indexer.index[idDoc])
+
+    def getLengthDocs(self):
+        return self.indexer.getLengthDocs()
+
     def getWeightsForQuery(self, query):
         pass
 
+    def getTfsForStem(self, stem):
+        return self.indexer.getTfsForStem(stem)
 
 class Weighter1(Weighter):
     """

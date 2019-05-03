@@ -11,7 +11,9 @@ class IRModel:
         pass
 
     def getRanking(self, query):
-        pass
+        s = self.getScores(query)
+        sort = sorted(s.items(), key=operator.itemgetter(1), reverse=True)
+        return sort
 
 
 class Vectoriel(IRModel):
@@ -38,13 +40,30 @@ class Vectoriel(IRModel):
 
         return score
 
-    def getRanking(self, query):
-        s = self.getScores(query)
-        sort = sorted(s.items(), key=operator.itemgetter(1), reverse=True)
-        # for t in sort:
-        #     print("doc:", t[0], " score:", t[1])
-        return sort
 
+class Jelinek_Mercer(IRModel):
+
+    def __init__(self, weighter, lambda_=0.2):
+        super().__init__(weighter)
+        self.lambda_ = lambda_
+
+    def getScores(self, query):
+
+        tailleCorpus = self.weighter.getLengthDocs()
+        query = self.weighter.getWeightsForQuery(query)
+        print('query =', query)
+
+        score = dict()
+
+        for stem in query:
+            tf_total = (1 - self.lambda_) * sum(nb for _, nb in self.weighter.getTfsForStem(stem).items()) / tailleCorpus
+
+            weights_stem = self.weighter.getWeightsForStem(stem)
+
+            for doc in weights_stem:
+                score[doc] = score.get(doc, 0) + (self.lambda_ * (weights_stem[doc] / self.weighter.getLengthDoc(doc))) + tf_total
+
+        return score
 
 class Langue(IRModel):
 
@@ -54,7 +73,7 @@ class Langue(IRModel):
         self.alpha = alpha
 
     def getScores(self, query):
-        return self.score_langue(query, self.weighter, self.alpha)
+        return self.score_langue(query, 1,self.weighter, self.alpha)
 
     def m_score_langue(self, query, weighter, alpha):
         q_count = weighter.getWeightsForQuery(query)
@@ -72,7 +91,8 @@ class Langue(IRModel):
         prod1 = 1
         prod2 = 1
         # print(weighter.index.index[d])
-        somme1 = sum(weighter.index.index[d].values())
+        somme1 = sum(weighter.indexer.index[d].values())
+        print(somme1)
         somme2 = sum([sum(weighter.index.index_inv[w].values()) for w in weighter.index.index_inv.keys()])
         for word in q_count.keys():
             if word in weighter.index.index[d].keys():

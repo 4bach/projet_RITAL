@@ -5,10 +5,7 @@ from Parser import Parser
 
 import IndexerSimple
 import Weighter
-from IRModel import Vectoriel
-# from Weighter import Weighter1
-# from Weighter import Weighter2
-# from Weighter import Weighter3
+import IRModel
 from TextRepresenter import PorterStemmer
 
 qry = "Computers Computers in Inspection Procedures Science Science"
@@ -55,7 +52,7 @@ if __name__ == "__main__":
 
 
 
-    v1 = Vectoriel(w1, False)
+    v1 = IRModel.Vectoriel(w1, False)
     s1 = v1.getScores(qry)
     sort = v1.getRanking(qry)
     print("s1:",s1)
@@ -64,7 +61,7 @@ if __name__ == "__main__":
         print("doc:", t[0], " score:", t[1])
     print()
 
-    v2 = Vectoriel(w2, False)
+    v2 = IRModel.Vectoriel(w2, False)
     s2 = v2.getScores(qry)
     sort = v2.getRanking(qry)
     print("s2:",s2)
@@ -73,7 +70,7 @@ if __name__ == "__main__":
         print("doc:", t[0], " score:", t[1])
     print()
 
-    v3 = Vectoriel(w3, False)
+    v3 = IRModel.Vectoriel(w3, False)
     s3 = v3.getScores(qry)
     sort = v3.getRanking(qry)
 
@@ -82,7 +79,7 @@ if __name__ == "__main__":
         print("doc:", t[0], " score:", t[1])
     print()
 
-    v4 = Vectoriel(w4, False)
+    v4 = IRModel.Vectoriel(w4, False)
     s4 = v4.getScores(qry)
     sort = v4.getRanking(qry)
 
@@ -91,11 +88,20 @@ if __name__ == "__main__":
         print("doc:", t[0], " score:", t[1])
     print()
 
-    v5 = Vectoriel(w5, False)
+    v5 = IRModel.Vectoriel(w5, False)
     s5 = v5.getScores(qry)
     sort = v5.getRanking(qry)
 
     print("s5:",s5)
+    for t in sort:
+        print("doc:", t[0], " score:", t[1])
+    print()
+
+    l = IRModel.Jelinek_Mercer(w1)
+    l1 = l.getScores(qry)
+    sort = l.getRanking(qry)
+
+    print("l1:",l1)
     for t in sort:
         print("doc:", t[0], " score:", t[1])
     print()

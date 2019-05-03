@@ -59,6 +59,9 @@ class IndexerSimple:
     def getNbDoc(self):
         return len(self.index)
 
+    def getLengthDocs(self):
+        return sum(len(self.collection[doc].getTexte()) for doc in self.collection)
+
     @staticmethod
     def countWord(doc):
         """
