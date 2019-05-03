@@ -1,5 +1,6 @@
 import operator
 import numpy as np
+import math
 
 
 class IRModel:
@@ -25,7 +26,6 @@ class Vectoriel(IRModel):
     def getScores(self, query):
 
         query = self.weighter.getWeightsForQuery(query)
-        print('query =', query)
 
         score = dict()
 
@@ -51,7 +51,6 @@ class Jelinek_Mercer(IRModel):
 
         tailleCorpus = self.weighter.getLengthDocs()
         query = self.weighter.getWeightsForQuery(query)
-        print('query =', query)
 
         score = dict()
 
@@ -61,89 +60,39 @@ class Jelinek_Mercer(IRModel):
             weights_stem = self.weighter.getWeightsForStem(stem)
 
             for doc in weights_stem:
+                print("doc =",doc)
+                print("self.weighter.getLengthDoc(doc) =",self.weighter.getLengthDoc(doc))
                 score[doc] = score.get(doc, 0) + (self.lambda_ * (weights_stem[doc] / self.weighter.getLengthDoc(doc))) + tf_total
 
         return score
 
-class Langue(IRModel):
 
-    def __init__(self, index, Weighter, alpha):
-        self.weighter = Weighter
-        self.index = index
-        self.alpha = alpha
+class Okapi(IRModel):
 
-    def getScores(self, query):
-        return self.score_langue(query, 1,self.weighter, self.alpha)
-
-    def m_score_langue(self, query, weighter, alpha):
-        q_count = weighter.getWeightsForQuery(query)
-        list_id_doc = set()
-        for item in q_count.keys():
-            for doc in weighter.index.index_inv[item].keys():
-                list_id_doc.add(doc)
-        list_id_doc = list(list_id_doc)
-        res = dict()
-        for doc in list_id_doc:
-            res[doc] = self.score_langue(q_count, doc, weighter, alpha)
-        return res
-
-    def score_langue(self, q_count, d, weighter, alpha):
-        prod1 = 1
-        prod2 = 1
-        # print(weighter.index.index[d])
-        somme1 = sum(weighter.indexer.index[d].values())
-        print(somme1)
-        somme2 = sum([sum(weighter.index.index_inv[w].values()) for w in weighter.index.index_inv.keys()])
-        for word in q_count.keys():
-            if word in weighter.index.index[d].keys():
-                prod1 *= weighter.index.index[d][word] / somme1
-                prod2 *= sum(weighter.index.index_inv[word].values()) / somme2
-
-        return alpha * prod1 + (1 - alpha) * prod2
-
-
-class okapi(IRModel):
-
-    def __init__(self, index, Weighter, b, k1):
-        self.index = index
-        self.weighter = Weighter
-        self.b = b
+    def __init__(self, weighter, k1, b):
+        super().__init__(weighter)
         self.k1 = k1
+        self.b = b
 
     def getScores(self, query):
 
-        return self.score_okapi(query, self.weighter, self.b, self.k1)
+        query = self.weighter.getWeightsForQuery(query)
 
-    def m_score_okapi(self, query, weighter, b, k1):
-        q_count = weighter.getWeightsForQuery(query)
-        list_id_doc = set()
-        for item in q_count.keys():
-            for doc in weighter.index.index_inv[item].keys():
-                list_id_doc.add(doc)
-        list_id_doc = list(list_id_doc)
-        res = dict()
+        score = dict()
+        N = self.weighter.getNbDoc()
 
-        ldmoy = 0
-        for doc in weighter.index.index.keys():
-            ldmoy += sum(weighter.index.index[doc].values())
-        ldmoy /= len(weighter.index.index.keys())
+        for stem in query:
 
-        for doc in list_id_doc:
-            res[doc] = self.score_okapi(q_count, doc, weighter, b, k1, ldmoy)
-        return res
+            docWithStem = self.weighter.getTfsForStem(stem)
+            nStem = len(docWithStem)
+            # idfStem = math.log((N - nStem + 0.5) / (nStem + 0.5))
+            if nStem > 0:
+                idfStem = math.log(N / nStem)
 
-    def score_okapi(self, q_count, d, weighter, b, k1, ldmoy):
-        somme = 0
-        N = len(weighter.index.index)
-        ld = sum(weighter.index.index[d].values())
-        ld /= ldmoy
+            for idDoc in docWithStem:
+                freqStem = self.weighter.getTfsForStem(stem)[idDoc]
 
-        for word in q_count.keys():
-            if word in weighter.index.index[d].keys():
-                n = len(weighter.index.index_inv[word])
-                idf = np.log(N / n)
-                tfyd = weighter.index.index[d][word]
-                denominateur = tfyd + k1 * (1 - b + b * ld)
-                somme += idf * tfyd / denominateur
+                bm25 = (freqStem * (self.k1 + 1)) / (freqStem + self.k1 * (1 - self.b + self.b * (self.weighter.getLengthDoc(idDoc) / (self.weighter.getLengthDocs() / self.weighter.getNbDoc()))))
+                score[idDoc] = score.get(idDoc, 0) + idfStem * bm25
 
-        return somme
+        return score

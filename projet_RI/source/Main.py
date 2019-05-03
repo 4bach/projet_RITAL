@@ -8,7 +8,7 @@ import Weighter
 import IRModel
 from TextRepresenter import PorterStemmer
 
-qry = "Computers Computers in Inspection Procedures Science Science"
+qry = "Computers in Inspection Procedures Science"
 
 
 
@@ -102,6 +102,15 @@ if __name__ == "__main__":
     sort = l.getRanking(qry)
 
     print("l1:",l1)
+    for t in sort:
+        print("doc:", t[0], " score:", t[1])
+    print()
+
+    b = IRModel.Okapi(w1, 1.2, 0.75)
+    b1 = b.getScores(qry)
+    sort = b.getRanking(qry)
+
+    print("b1:",b1)
     for t in sort:
         print("doc:", t[0], " score:", t[1])
     print()
