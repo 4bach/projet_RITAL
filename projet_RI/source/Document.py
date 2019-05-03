@@ -21,3 +21,16 @@ class Document:
 
     def getTexte(self):
         return self.texte
+
+
+class Query(Document):
+
+    def __init__(self):
+        super().__init__()
+        self.listPertinent = list()
+
+    def addPertinent(self, idDoc):
+        self.listPertinent.append(idDoc)
+
+    def getPertinent(self):
+        return self.listPertinent
