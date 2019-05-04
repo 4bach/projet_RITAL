@@ -32,5 +32,5 @@ class Query(Document):
     def addPertinent(self, idDoc):
         self.listPertinent.append(idDoc)
 
-    def getPertinent(self):
+    def getPertinents(self):
         return self.listPertinent

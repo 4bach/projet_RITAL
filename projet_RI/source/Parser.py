@@ -1,17 +1,21 @@
 import re
-from Document import Document 
+import Document
 
 
 class Parser:
-    
-    def buildDocCollectionSimple(fichier):
+
+    @staticmethod
+    def buildDocCollectionSimple(fichier, baliseText='.T'):
         """
             Construit l'index a partir d'une base de documents contenus dans fichier,
         On lit les lignes du fichier une par une, et on repère les balises texte .T
-        et les balises id .I
+        et les balises id .I (les balises texte pour une requete sont .W)
 
         :type fichier: String
         :param fichier: Le fichier qui contient les documents que l'on veut indexé
+
+        :type baliseText: String
+        :param baliseText: La balise que l'on va utilier pour recuperer le texte, .T pour un doc, .W pour une requête
 
         :return: Un dictionnaire de d'object Document, dont les clef sont les id des
                 Document.
@@ -22,7 +26,7 @@ class Parser:
         lireID = -1
         text = ""
         inT = False  # Boolean qui nous indique si l'on est dans une balise texte
-        d = Document()
+        d = Document.Document() if baliseText == '.T' else Document.Query()
         f = open(fichier, 'r')
         for l in f.readlines():  # Pour chaque ligne du fichier
             
@@ -38,19 +42,20 @@ class Parser:
                     text = text + l 
                 
             if lireID > 0:  # Si a deja lu une balise id, mais pas encore de balise texte
-                if l.startswith(".T"):  # Et que la ligne courante commence par un .T
+                if l.startswith(baliseText):  # Et que la ligne courante commence par un .T
                     inT = True  # alors on est dans une balise texte
                     text = ""
                 
             if l[:2] == ".I":  # Si on a pas vue de balise id et que la ligne courante commence par .I
                 lireID = int(l[3:])
-                d = Document()  # On cree un nouveau document
+                d = Document.Document() if baliseText == '.T' else Document.Query()
                 d.setID(lireID)  # Auquel on lui donne son id
                 resultat[lireID] = ""
 
         f.close()
         return resultat
 
+    @staticmethod
     def buildDocumentCollectionRegex(fichier):
         """
             Construit l'index a partir d'une base de documents contenus dans fichier,
@@ -71,7 +76,7 @@ class Parser:
         docs = doc.split(".I")
     
         for di in range(1, len(docs)):
-            d = Document()
+            d = Document.Document()
             id_doc = re.search(r'(\d*|$)', docs[di][1:]).group(0)
             d.setID(int(id_doc))
             m = re.search(r'\.T(.*?)\.', docs[di], re.DOTALL)
@@ -84,6 +89,26 @@ class Parser:
             resultat[id_doc] = d
         f.close()
         return resultat
-        
-        
-            
+
+    @staticmethod
+    def buildQueryCollection(fichierQry, fichierRel=None):
+
+        if fichierRel is None:
+            fichierRel = fichierQry + '.rel'
+            fichierQry = fichierQry + '.qry'
+
+        collection = Parser.buildDocCollectionSimple(fichierQry, ".W")
+        Parser.buildPertinenceQuery(collection, fichierRel)
+
+        return collection
+
+    @staticmethod
+    def buildPertinenceQuery(collection, fichierRel):
+
+        f = open(fichierRel, 'r')
+        for ligne in f.readlines():  # Pour chaque ligne du fichier
+
+            pertinence = [int(n) for n in re.findall('\d+', ligne)]
+            collection[pertinence[0]].addPertinent(pertinence[1])
+
+
