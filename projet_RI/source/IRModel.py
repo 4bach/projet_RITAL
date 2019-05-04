@@ -26,7 +26,7 @@ class Vectoriel(IRModel):
     def getScores(self, query):
 
         query = self.weighter.getWeightsForQuery(query)
-
+        print(query)
         score = dict()
 
         if self.normalized:
@@ -69,7 +69,7 @@ class Jelinek_Mercer(IRModel):
 
 class Okapi(IRModel):
 
-    def __init__(self, weighter, k1, b):
+    def __init__(self, weighter, k1=0.75, b=1.2):
         super().__init__(weighter)
         self.k1 = k1
         self.b = b

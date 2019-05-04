@@ -7,6 +7,7 @@ import IndexerSimple
 import Weighter
 import IRModel
 from TextRepresenter import PorterStemmer
+import EvalIRModel
 
 qry = "Computers in Inspection Procedures Science"
 
@@ -15,8 +16,8 @@ qry = "Computers in Inspection Procedures Science"
 if __name__ == "__main__":
 
     # ####    TME 1 - Indexation    ####
-    # D = Parser.buildDocCollectionSimple('../cacmShort-good.txt')
-    # # print(D)
+    D = Parser.buildDocCollectionSimple('../cacmShort-good.txt')
+    print(D)
     # # print("Texte du document 1 :", D[1].getTexte())
     # # print("Representation du même document :", PorterStemmer().getTextRepresentation(D[1].getTexte()))
     #
@@ -114,6 +115,9 @@ if __name__ == "__main__":
     # for t in sort:
     #     print("doc:", t[0], " score:", t[1])
     # print()
+    #
+    # Q = Parser.buildQueryCollection('../data/cacm/cacm')
+    # print(Q[10].getPertinents())
 
-    Q = Parser.buildQueryCollection('../data/cacm/cacm')
-    print(Q[10].getPertinents())
+    eval = EvalIRModel.EvalIRModel('../data/cacm/cacm', IRModel.Okapi, Weighter.Weighter1, True)
+    eval.evalModel()
