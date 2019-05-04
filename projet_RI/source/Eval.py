@@ -42,7 +42,7 @@ class RappelAtK(EvalMesure):
 
 class FMesureAtK(EvalMesure):
 
-    def __init__(self, k, beta):
+    def __init__(self, k=1, beta=0.5):
         self.k = k
         self.beta = beta
 
@@ -51,7 +51,7 @@ class FMesureAtK(EvalMesure):
         p = PrecisionAtK(self.k).evalQuery(liste, Query)
         r = RappelAtK(self.k).evalQuery(liste, Query)
 
-        return (1 + self.bera) * ((p * r) / (self.beta * p + r))
+        return (1 + self.beta) * ((p * r) / (self.beta * p + r)) if p + r > 0 else 0
 
 
 class AvgP(EvalMesure):
@@ -59,13 +59,16 @@ class AvgP(EvalMesure):
     def evalQuery(self, liste, Query):
 
         pertinent = Query.getPertinents()
+        if len(pertinent) is 0:
+            return 0
+
         resultat = 0
         truePositive = 0
 
         for i in range(len(liste)):
             if liste[i] in pertinent:
                 truePositive += 1
-                resultat += truePositive/i
+                resultat += truePositive/ (i + 1)
 
         return resultat / len(pertinent)
 
@@ -102,7 +105,7 @@ class Ndcg(EvalMesure):
         for i in range(1, len(liste)):  # Pour chaque doc resultat
 
             if liste[i] in pertinent:  # Si le document i est pertinent
-                dcg += 1 / math.log(i, 2)  # On utilise en log en base 2
-            idcg += 1 / math.log(i, 2)
+                dcg += 1 / math.log(i + 1, 2)  # On utilise en log en base 2
+            idcg += 1 / math.log(i + 1, 2)
 
         return dcg / idcg

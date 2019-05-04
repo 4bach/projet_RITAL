@@ -119,5 +119,11 @@ if __name__ == "__main__":
     # Q = Parser.buildQueryCollection('../data/cacm/cacm')
     # print(Q[10].getPertinents())
 
-    eval = EvalIRModel.EvalIRModel('../data/cacm/cacm', IRModel.Vectoriel, Weighter.Weighter1, True)
-    eval.evalModel()
+    collection = Parser.buildDocCollectionSimple('../data/cacm/cacm.txt')
+    index = IndexerSimple.IndexerSimple()
+    index.indexation(collection)
+    weighter = Weighter.Weighter1(index)
+    model = IRModel.Vectoriel(weighter)
+    eval = EvalIRModel.EvalIRModel('../data/cacm/cacm', model, k=5, verbose=True)
+    resultat = eval.evalModel()
+    print(resultat)
