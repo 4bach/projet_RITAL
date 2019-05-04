@@ -1,7 +1,7 @@
 
-class Document:
+class Info:
     """
-    Une classe Document qui nous sert a stocker un document,
+    Une classe abstraite Info qui nous sert a stocker les element indispensable d'une page,
     C'est a dire un ID et un texte
     """
 
@@ -10,7 +10,6 @@ class Document:
         self.texte = ""
     
     def setID(self, identifiant):
-        
         self.identifiant = identifiant
     
     def getID(self):
@@ -19,11 +18,26 @@ class Document:
     def setTexte(self, texte):
         self.texte = texte
 
+    def addTexte(self, texte):
+        self.texte += texte
+
     def getTexte(self):
         return self.texte
 
 
-class Query(Document):
+class Document(Info):
+
+    def __init__(self):
+        super().__init__()
+        self.linkTo = dict()
+
+    def addLinkTo(self, idDoc):
+        self.linkTo[idDoc] = self.linkTo.get(idDoc, 0) + 1
+
+    def getLinkTo(self):
+        return self.linkTo
+
+class Query(Info):
 
     def __init__(self):
         super().__init__()

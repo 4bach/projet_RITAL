@@ -24,35 +24,39 @@ class Parser:
 
         resultat = dict()
         lireID = -1
-        text = ""
         inT = False  # Boolean qui nous indique si l'on est dans une balise texte
-        d = Document.Document() if baliseText == '.T' else Document.Query()
+        inX = False  # Boolean qui nous indique si l'on est dans une balise link
         f = open(fichier, 'r')
         for l in f.readlines():  # Pour chaque ligne du fichier
-            
-            if inT:  # Si on est déjà dans une balise de texte
 
-                if l.startswith("."):  # Et Si la ligne courante commence par un .
-                    inT = False                # Alors cela signifie que l'on sort de la texte
-                    d.setTexte(text)           # On va ajouter le texte que l'on a trouver dans notre document
-                    resultat[lireID] = d  # On ajoute notre document a notre dictionnaire resultat
-                    lireID = -1
+            if l.startswith(baliseText):
+                inT = True
+                inX = False
 
-                else:                  # Sinon, c'est que l'on toujour dans notre balise texte
-                    text = text + l 
-                
-            if lireID > 0:  # Si a deja lu une balise id, mais pas encore de balise texte
-                if l.startswith(baliseText):  # Et que la ligne courante commence par un .T
-                    inT = True  # alors on est dans une balise texte
-                    text = ""
-                
-            if l[:2] == ".I":  # Si on a pas vue de balise id et que la ligne courante commence par .I
+            elif l.startswith('.X') and baliseText == '.T':
+                inT = False
+                inX = True
+
+            elif l.startswith('.I'):
                 lireID = int(l[3:])
                 d = Document.Document() if baliseText == '.T' else Document.Query()
                 d.setID(lireID)  # Auquel on lui donne son id
-                resultat[lireID] = ""
+                resultat[lireID] = d
+                inT = False
+                inX = False
+
+            elif l.startswith('.'):
+                inT = False
+                inX = False
+
+            elif inT:  # Si on est dans une balise de texte
+                resultat[lireID].addTexte(l)
+
+            elif inX and l != '\n':  # Si on est dans une balise de link
+                resultat[lireID].addLinkTo(re.findall('\d+',l)[0])
 
         f.close()
+        print(resultat)
         return resultat
 
     @staticmethod

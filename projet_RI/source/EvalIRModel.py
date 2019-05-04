@@ -17,6 +17,7 @@ class EvalIRModel:
         self.model = modelIR
 
         self.collectionQry = Parser.Parser.buildQueryCollection(self.fichier)
+        print(self.collectionQry[1].getTexte())
         self.print_verbose("Recuperation des queries effectué")
 
     def evalModel(self):
