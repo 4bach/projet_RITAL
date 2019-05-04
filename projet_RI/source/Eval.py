@@ -24,14 +24,16 @@ class PrecisionAtK(EvalMesure):
 
 class RappelAtK(EvalMesure):
 
-    def __init__(self, k):
+    def __init__(self, k=1):
         self.k = k
 
     def evalQuery(self, liste, Query):
 
         resultat = 0
         pertinent = Query.getPertinents()
-        for doc in range(self.k):
+        if len(pertinent) is 0:
+            return 0
+        for doc in range(min(len(liste), self.k)):
             if liste[doc] in pertinent:
                 resultat += 1
 

@@ -1,8 +1,8 @@
 import Eval
 import IndexerSimple
-import IRModel
 import Parser
-import Weighter
+
+import numpy as np
 
 
 class EvalIRModel:
@@ -26,16 +26,18 @@ class EvalIRModel:
 
     def evalModel(self):
 
-        s = 0
+        PrecisionAtK = []
+        RappelAtK = []
         for query in self.collectionQry:
             self.print_verbose('query =', self.collectionQry[query].getTexte())
             liste = [resultat[0] for resultat in self.model.getRanking(self.collectionQry[query].getTexte())]
             self.print_verbose(liste)
-            PrecisionAtK = Eval.PrecisionAtK().evalQuery(liste, self.collectionQry[query])
-            self.print_verbose("score =", PrecisionAtK)
-            s += PrecisionAtK
-        self.print_verbose(s)
-        print(s/len(self.collectionQry))
+            PrecisionAtK.append(Eval.PrecisionAtK(10).evalQuery(liste, self.collectionQry[query]))
+            RappelAtK.append(Eval.RappelAtK(10).evalQuery(liste, self.collectionQry[query]))
+            self.print_verbose("score PrecisionAtK=", PrecisionAtK[-1])
+        self.print_verbose(PrecisionAtK, RappelAtK)
+        print(np.mean(PrecisionAtK))
+        print(np.mean(RappelAtK))
 
     def print_verbose(self, *args, **kwargs):
         if self.verbose:
