@@ -30,12 +30,20 @@ class Document(Info):
     def __init__(self):
         super().__init__()
         self.linkTo = dict()
+        self.linkFrom = list()
 
     def addLinkTo(self, idDoc):
         self.linkTo[idDoc] = self.linkTo.get(idDoc, 0) + 1
 
-    def getLinkTo(self):
+    def getHyperlinksTo(self):
         return self.linkTo
+
+    def setLinkFrom(self, listFrom):
+        self.linkFrom = listFrom
+
+    def getHyperlinksFrom(self):
+        return self.linkFrom
+
 
 class Query(Info):
 

@@ -5,7 +5,7 @@ import Document
 class Parser:
 
     @staticmethod
-    def buildDocCollectionSimple(fichier, baliseText='.T'):
+    def buildDocCollectionSimple(fichier, baliseText='.T', pageRank=False):
         """
             Construit l'index a partir d'une base de documents contenus dans fichier,
         On lit les lignes du fichier une par une, et on repère les balises texte .T
@@ -24,6 +24,7 @@ class Parser:
 
         resultat = dict()
         lireID = -1
+        linkFrom = dict()
         inT = False  # Boolean qui nous indique si l'on est dans une balise texte
         inX = False  # Boolean qui nous indique si l'on est dans une balise link
         f = open(fichier, 'r')
@@ -53,11 +54,21 @@ class Parser:
                 resultat[lireID].addTexte(l)
 
             elif inX and l != '\n':  # Si on est dans une balise de link
-                resultat[lireID].addLinkTo(re.findall('\d+',l)[0])
+                fromId = int(re.findall('\d+', l)[0])
+                resultat[lireID].addLinkTo(fromId)
+                linkFrom[fromId] = linkFrom.get(fromId, []) + [lireID]
 
         f.close()
-        print(resultat)
-        return resultat
+        # print('resultat =', resultat)
+        # print('len(resultat) =', len(resultat))
+        # print('linkFrom =', linkFrom)
+
+        if not pageRank:
+            return resultat
+        else:
+            for idDoc in linkFrom:
+                resultat[idDoc].setLinkFrom(linkFrom[idDoc])
+            return resultat
 
     @staticmethod
     def buildDocumentCollectionRegex(fichier):

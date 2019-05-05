@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # Q = Parser.buildQueryCollection('../data/cacm/cacm')
     # print(Q[10].getPertinents())
 
-    collection = Parser.buildDocCollectionSimple('../data/cacm/cacm.txt')
+    collection = Parser.buildDocCollectionSimple('../data/cacm/cacm.txt', pageRank=True)
     index = IndexerSimple.IndexerSimple()
     index.indexation(collection)
     weighter = Weighter.Weighter1(index)
