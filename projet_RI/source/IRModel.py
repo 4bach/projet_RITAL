@@ -26,7 +26,7 @@ class Vectoriel(IRModel):
     def getScores(self, query):
 
         query = self.weighter.getWeightsForQuery(query)
-        print(query)
+        # print(query)
         score = dict()
 
         if self.normalized:
@@ -60,8 +60,8 @@ class Jelinek_Mercer(IRModel):
             weights_stem = self.weighter.getWeightsForStem(stem)
 
             for doc in weights_stem:
-                print("doc =",doc)
-                print("self.weighter.getLengthDoc(doc) =",self.weighter.getLengthDoc(doc))
+                # print("doc =",doc)
+                # print("self.weighter.getLengthDoc(doc) =",self.weighter.getLengthDoc(doc))
                 score[doc] = score.get(doc, 0) + (self.lambda_ * (weights_stem[doc] / self.weighter.getLengthDoc(doc))) + tf_total
 
         return score
