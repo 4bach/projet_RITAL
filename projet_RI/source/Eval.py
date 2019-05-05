@@ -1,5 +1,6 @@
 import math
 
+
 class EvalMesure:
 
     def evalQuery(self, liste, Query):
@@ -80,8 +81,10 @@ class MAP:
         resultat = 0
         mesure = AvgP()
 
-        for i in range(len(l_liste)):
-            resultat += mesure.evalQuery(l_liste[i], l_Query[i])
+        i = 0
+        for qry in l_Query:
+            resultat += mesure.evalQuery(l_liste[i], l_Query[qry])
+            i += 1
 
         return resultat / len(l_liste)
 

@@ -19,6 +19,12 @@ class IRModel:
     def getWeighter(self):
         return self.weighter
 
+    def setParametre(self, *args):
+        pass
+
+    def parametreOptimaux(self, *args):
+        pass
+
 
 class Vectoriel(IRModel):
 
@@ -29,7 +35,7 @@ class Vectoriel(IRModel):
     def getScores(self, query):
 
         query = self.weighter.getWeightsForQuery(query)
-        # print(query)
+
         score = dict()
 
         if self.normalized:
@@ -73,6 +79,14 @@ class Jelinek_Mercer(IRModel):
 
         return score
 
+    def setParametre(self, *args):
+        print("lallalalala")
+        self.lambda_ = args[0]
+        print("self.lambda_ =", self.lambda_)
+
+    def parametreOptimaux(self, *args):
+        print(args[0])
+
     def __str__(self):
         return "Modèle Jelinek_Mercer, lambda = " + str(self.lambda_) + '\nAvec ' + str(self.weighter)
 
@@ -108,6 +122,10 @@ class Okapi(IRModel):
                 score[idDoc] = score.get(idDoc, 0) + idfStem * bm25
 
         return score
+
+    def setParametre(self, *args):
+        self.k1 = args[0]
+        self.b = args[1]
 
     def __str__(self):
         return "Modèle Okapi, ou BM25, k1 = " + str(self.k1) + ", b = " + str(self.b) +'\nAvec ' + str(self.weighter)
