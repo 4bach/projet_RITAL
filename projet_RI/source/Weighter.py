@@ -48,6 +48,9 @@ class Weighter1(Weighter):
     def getWeightsForQuery(self, query):
         return {terme: 1 for terme in self.indexer.countWord(query)}
 
+    def __str__(self):
+        return "Weighter numero 1"
+
 
 class Weighter2(Weighter):
     """
@@ -62,9 +65,8 @@ class Weighter2(Weighter):
     def getWeightsForQuery(self, query):
         return self.indexer.countWord(query)
 
-        # query_rep = self.indexer.countWord(query)
-        # taille_query_rep = sum([query_rep[n] for n in query_rep])
-        # return {terme: (query_rep[terme]/taille_query_rep) for terme in query_rep}
+    def __str__(self):
+        return "Weighter numero 2"
 
 
 class Weighter3(Weighter):
@@ -84,6 +86,9 @@ class Weighter3(Weighter):
             if terme in self.indexer.index_inv:
                 resultat[terme] = math.log((1 + self.indexer.getNbDoc()) / (1 + len(self.indexer.index_inv[terme])))
         return resultat
+
+    def __str__(self):
+        return "Weighter numero 3"
 
 
 class Weighter4(Weighter):
@@ -108,6 +113,9 @@ class Weighter4(Weighter):
             if terme in self.indexer.index_inv:
                 resultat[terme] = self.indexer.getIdfForStem(terme)
         return resultat
+
+    def __str__(self):
+        return "Weighter numero 4"
 
 
 class Weighter5(Weighter):
@@ -138,4 +146,7 @@ class Weighter5(Weighter):
             if terme in self.indexer.index_inv:
                 resultat[terme] = self.indexer.getIdfForStem(terme) * (1 + math.log(tf_query[terme]))
         return resultat
+
+    def __str__(self):
+        return "Weighter numero 5"
 

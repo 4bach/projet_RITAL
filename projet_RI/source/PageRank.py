@@ -55,3 +55,6 @@ class PageRank(IRModel.IRModel):
 
         return graphe
 
+    def __str__(self):
+        return "Page Rank sur le " + str(self.model)
+

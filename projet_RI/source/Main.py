@@ -125,9 +125,12 @@ if __name__ == "__main__":
     model = IRModel.Vectoriel(weighter)
     eval = EvalIRModel.EvalIRModel('../data/cacm/cacm', model, k=5, verbose=False)
     resultat = eval.evalModel()
+    print(resultat)
+
+    # pr = PageRank.PageRank(weighter, model)
+    # evalpageRank = EvalIRModel.EvalIRModel('../data/cacm/cacm', pr, k=5, verbose=False)
+    # resultat = evalpageRank.evalModel()
     # print(resultat)
 
-    pr = PageRank.PageRank(weighter, model)
-    evalpageRank = EvalIRModel.EvalIRModel('../data/cacm/cacm', pr, k=5, verbose=False)
-    resultat = evalpageRank.evalModel()
-    print(resultat)
+    evalue = EvalIRModel.EvalAllIRModel('../data/cacm/cacm')
+    evalue.evalAllModel(5)

@@ -16,6 +16,9 @@ class IRModel:
         sort = sorted(s.items(), key=operator.itemgetter(1), reverse=True)
         return sort
 
+    def getWeighter(self):
+        return self.weighter
+
 
 class Vectoriel(IRModel):
 
@@ -39,6 +42,10 @@ class Vectoriel(IRModel):
                     score[doc] = score.get(doc, 0) + weights_stem[doc] * query[stem]
 
         return score
+
+    def __str__(self):
+        return "Modèle Vectoriel" + (" normaliser" if self.normalized else " non normaliser") + '\nAvec ' + \
+               str(self.weighter)
 
 
 class Jelinek_Mercer(IRModel):
@@ -66,6 +73,9 @@ class Jelinek_Mercer(IRModel):
 
         return score
 
+    def __str__(self):
+        return "Modèle Jelinek_Mercer, lambda = " + str(self.lambda_) + '\nAvec ' + str(self.weighter)
+
 
 class Okapi(IRModel):
 
@@ -81,6 +91,8 @@ class Okapi(IRModel):
         score = dict()
         N = self.weighter.getNbDoc()
 
+        moyenneMotDoc = self.weighter.getLengthDocs() / self.weighter.getNbDoc()
+
         for stem in query:
 
             docWithStem = self.weighter.getTfsForStem(stem)
@@ -92,7 +104,10 @@ class Okapi(IRModel):
             for idDoc in docWithStem:
                 freqStem = self.weighter.getTfsForStem(stem)[idDoc]
 
-                bm25 = (freqStem * (self.k1 + 1)) / (freqStem + self.k1 * (1 - self.b + self.b * (self.weighter.getLengthDoc(idDoc) / (self.weighter.getLengthDocs() / self.weighter.getNbDoc()))))
+                bm25 = (freqStem * (self.k1 + 1)) / (freqStem + self.k1 * (1 - self.b + self.b * (self.weighter.getLengthDoc(idDoc) / moyenneMotDoc)))
                 score[idDoc] = score.get(idDoc, 0) + idfStem * bm25
 
         return score
+
+    def __str__(self):
+        return "Modèle Okapi, ou BM25, k1 = " + str(self.k1) + ", b = " + str(self.b) +'\nAvec ' + str(self.weighter)
