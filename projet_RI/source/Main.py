@@ -3,15 +3,14 @@
 
 from Parser import Parser
 
-import IndexerSimple
-import Weighter
-import IRModel
-from TextRepresenter import PorterStemmer
 import EvalIRModel
+import IndexerSimple
+import IRModel
+import PageRank
+import Weighter
+
 
 qry = "Computers in Inspection Procedures Science"
-
-
 
 if __name__ == "__main__":
 
@@ -124,6 +123,9 @@ if __name__ == "__main__":
     index.indexation(collection)
     weighter = Weighter.Weighter1(index)
     model = IRModel.Vectoriel(weighter)
-    eval = EvalIRModel.EvalIRModel('../data/cacm/cacm', model, k=5, verbose=True)
-    resultat = eval.evalModel()
-    print(resultat)
+    # eval = EvalIRModel.EvalIRModel('../data/cacm/cacm', model, k=5, verbose=True)
+    # resultat = eval.evalModel()
+    # print(resultat)
+
+    pr = PageRank.PageRank(weighter, model)
+    pr.getScores(qry)

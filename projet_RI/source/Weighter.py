@@ -1,8 +1,4 @@
-from collections import Counter
-from TextRepresenter import PorterStemmer
 import math
-import IndexerSimple
-import numpy as np
 
 
 class Weighter:
@@ -30,6 +26,13 @@ class Weighter:
 
     def getTfsForStem(self, stem):
         return self.indexer.getTfsForStem(stem)
+
+    def getHyperlinksFrom(self, idDoc):
+        return self.indexer.getHyperlinksFrom(idDoc)
+
+    def getHyperlinksTo(self, idDoc):
+        return self.indexer.getHyperlinksTo(idDoc)
+
 
 class Weighter1(Weighter):
     """

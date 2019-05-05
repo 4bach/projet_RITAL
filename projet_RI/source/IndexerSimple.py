@@ -62,6 +62,12 @@ class IndexerSimple:
     def getLengthDocs(self):
         return sum(len(self.collection[doc].getTexte()) for doc in self.collection)
 
+    def getHyperlinksFrom(self, idDoc):
+        return self.collection[idDoc].getHyperlinksFrom()
+
+    def getHyperlinksTo(self, idDoc):
+        return self.collection[idDoc].getHyperlinksTo()
+
     @staticmethod
     def countWord(doc):
         """
