@@ -37,7 +37,10 @@ class PageRank(IRModel.IRModel):
         """
             Fonction qui a partir des seed contruie le graphe que l'on va parcourir pour le pageRank
         On ajoute tout les page qui sont directement pointer par les pages seed, et on rajoute self.k
-        page parmi toutes les pages qui pointe vers une page seed        
+        page parmi toutes les pages qui pointe vers une page seed   
+        
+        :return: un dictionaire qui represente le graphe pour le pageRank
+                {idPage: {idPage' qui sont pointer par idPage}}
         """
 
         graphe = dict()

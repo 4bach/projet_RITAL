@@ -7,6 +7,7 @@ Created on Thu Feb  7 17:58:38 2019
 """
 import math
 import TextRepresenter
+import shelve
 
 
 class IndexerSimple:
@@ -46,7 +47,6 @@ class IndexerSimple:
         if stem not in self.index_inv:
             return dict()
         return self.index_inv[stem]
-        # return {i: self.tf[i][stem] for i in self.index_inv[stem]}
 
     def getTfIDFsForStem(self, stem):
         if stem not in self.index_inv:
@@ -98,9 +98,7 @@ class IndexerSimple:
     def indexation(self, collection):
         """
             Construit simultanément l'index et l'index inversé ainsi que le tf idf à partir 
-            de la collection de documents.
-        
-        
+            de la collection de documents.        
         """
         self.collection = collection
 
@@ -127,3 +125,135 @@ class IndexerSimple:
         self.setIndex_inv(index_inv)
         self.setTf(tf)
         self.setTf_idf(tf_idf)
+        
+
+
+class IndexerFichier(IndexerSimple):
+    
+    def __init__(self, fichierNom):
+        super().__init__()
+        self.fichier = fichierNom
+        
+    def dumpIndex(self):
+        fichier = shelve.open(self.fichier)
+        fichier["index"] = self
+    
+    @staticmethod
+    def loadIndex(fichier):
+        return shelve.open(fichier)['index']
+           
+    def getCollection(self,d):
+        
+        s = shelve.open(self.fichier)['index']
+        try:
+            collection = s.collection[d]
+        finally:
+            s.close()
+        return collection 
+            
+    def getIndex(self):
+        s = shelve.open(self.fichier)['index']
+        try:
+            index = s.index
+        finally:
+            s.close()
+        return index
+
+    def getTfsForDoc(self, iddoc):
+        s = shelve.open(self.fichier)['index']
+        try:
+            tfForDoc = s.index[iddoc]
+        finally:
+            s.close()
+        return tfForDoc
+
+    def getTfIDFsForDoc(self, ind):
+        s = shelve.open(self.fichier)['index']
+        try:
+            tfidfForDoc = s.tf_idf[ind]
+        finally:
+            s.close()
+        return tfidfForDoc 
+
+    def getTfsForStem(self, stem):
+        s = shelve.open(self.fichier)['index']
+        index_inv = None
+        try:
+            index_inv = s.index_inv[stem]
+        finally:
+            s.close()
+            
+        return dict() if index_inv is None else index_inv
+
+    def getTfIDFsForStem(self, stem):
+        raise("not implementation")
+
+#        if stem not in self.index_inv:
+#            return dict()
+#        dico = dict()
+#        for iddoc in self.index_inv[stem].keys():
+#            dico[iddoc] = self.tf_idf[int(iddoc)][stem]
+#        return dico
+
+    def getIdfForStem(self, stem):
+        s = shelve.open(self.fichier)['index']
+        try:
+            resultat = math.log((1 + s.getNbDoc()) / (1 + len(s.index_inv[stem])))
+        finally:
+            s.close()
+        return resultat
+
+    def getStrDoc(self, iddoc):
+        s = shelve.open(self.fichier)['index']
+        try:
+            texte = s.collection[iddoc].getTexte()
+        finally:
+            s.close()
+        return texte
+
+    def getNbDoc(self):
+        s = shelve.open(self.fichier)['index']
+        try:
+            taille = len(s.index)
+        finally:
+            s.close()
+        return taille
+
+    def getLengthDocs(self):
+        s = shelve.open(self.fichier)['index']
+        try:
+            resultat = sum(len(s.collection[doc].getTexte()) for doc in s.collection)
+
+        finally:
+            s.close()
+        return resultat
+
+    def getHyperlinksFrom(self, idDoc):
+        """
+            Les liens des autres docs entrant pour un document ( utile pour PageRank )
+            return : une liste des docs entrants
+        """
+        s = shelve.open(self.fichier)['index']
+        try:
+            resultat = s.collection[idDoc].getHyperlinksFrom()
+
+        finally:
+            s.close()
+        return resultat
+
+    def getHyperlinksTo(self, idDoc):
+        """
+            Les liens des autres docs sortant pour un document ( utile pour PageRank )
+            return : un dictionnaire avec comme clés les documents avec lesquelles il a des liens.
+                                    avec comme valeur le nombre de lien vers ce doc
+        """
+        s = shelve.open(self.fichier)['index']
+        try:
+            resultat = s.collection[idDoc].getHyperlinksTo()
+        finally:
+            s.close()
+        return resultat
+    
+    
+
+

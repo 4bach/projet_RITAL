@@ -143,8 +143,9 @@ class EvalAllIRModel:
                 else:  # pour le modèle Vectoriel
                     model.append(modelIR[m](w))  # il n'y a pas de parametre a optimiser
                     model.append(modelIR[m](w,True))
-            
-        self.print_verbose("Tout les models Jelinek_Mercer et Okapi sont entrainer")
+        
+        if findParametre:
+            self.print_verbose("Tout les models Jelinek_Mercer et Okapi sont entrainer")
         self.model = []
 
         for m in model:
