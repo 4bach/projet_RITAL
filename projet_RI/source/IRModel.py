@@ -59,7 +59,7 @@ class Vectoriel(IRModel):
             for stem in query:
                 weights_stem = self.weighter.getWeightsForStem(stem)
                 for doc in weights_stem:
-                    score[doc] = score.get(doc,0) / (query[stem]**2 + doc_norm[doc])
+                    score[doc] = score.get(doc,0) + (query[stem]**2/ (query[stem]**2 + doc_norm[doc]))
 
         else:
             for stem in query:
@@ -178,11 +178,12 @@ class Okapi(IRModel):
         
         scoreEvaluation = []
         for para in Parametres:
-            self.setParametre(*para)
+            self.setParametre(para[0],para[1])
             scoreEvaluation.append(evaluation.evalModel())
             
-        self.setParametre = Parametres[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
-        
+        paraMax = Parametres[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
+        self.setParametre(*paraMax)
+     
     
     def __str__(self):
         return "Modèle Okapi, ou BM25, k1 = " + str(self.k1) + ", b = " + str(self.b) +'\nAvec ' + str(self.weighter)

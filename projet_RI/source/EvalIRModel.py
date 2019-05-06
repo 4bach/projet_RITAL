@@ -60,12 +60,14 @@ class EvalIRModel:
 
 class EvalAllIRModel:
 
-    def __init__(self, fichier, metrique="FMesure", tailleTrain=0.65):
+    def __init__(self, fichier, findParametre=False,metrique="FMesure", tailleTrain=0.65):
 
         collection = Parser.Parser.buildDocCollectionSimple(fichier + '.txt', pageRank=True)
         self.collectionQry = Parser.Parser.buildQueryCollection(fichier)
         self.train = dict()
-        self.separeTrainTest(tailleTrain)
+        
+        if findParametre:
+            self.separeTrainTest(tailleTrain)
 
         index = IndexerSimple.IndexerSimple()
         index.indexation(collection)
@@ -82,13 +84,14 @@ class EvalAllIRModel:
                 
                 if m == 1:  # pour le modèle Jelinek_Mercer
                     jelinek = modelIR[m](w)
-                    jelinek.findParametreOptimaux(np.arange(0, 1.4, 0.1), self.train, metrique)
+                    if findParametre:
+                        jelinek.findParametreOptimaux(np.arange(0, 1.4, 0.1), self.train, metrique)
                     model.append(jelinek)
                 elif m == 2:  # pour le modèle Okapi
-                    #okapi = modelIR[m](w)
-                    #okapi.findParametreOptimaux(np.arange(0, 1.4, 0.3), np.arange(0.5, 2, 0.3), self.train, metrique)
-                    #model.append(okapi)
-                    pass
+                    okapi = modelIR[m](w)
+                    if findParametre:
+                        okapi.findParametreOptimaux(np.arange(0, 1.4, 0.3), np.arange(0.5, 2, 0.3), self.train, metrique)
+                    model.append(okapi)
                 else:  # pour le modèle Vectoriel
                     model.append(modelIR[m](w))  # il n'y a pas de parametre a optimiser
                     model.append(modelIR[m](w,True))
@@ -119,15 +122,15 @@ class EvalAllIRModel:
 
         precision = max(resultat.items(), key=lambda x: x[1][0][0])[0]
         rappel = max(resultat.items(), key=lambda x: x[1][1][0])[0]
-        print('Le modèle qui a la plus grande Precision a', k, 'est le', precision, 'pour, \nprecision =', resultat[precision][0][0], "en moyenne\net std =", resultat[precision][0][1])
-        print('Le modèle qui a le plus grand rappel a', k, 'est le', rappel, 'pour, \nrappel =', resultat[rappel][0][0], "en moyenne\net std =", resultat[rappel][0][1])
+        fmesure = max(resultat.items(), key=lambda x: x[1][2][0])[0]
+        avgP = max(resultat.items(), key=lambda x: x[1][3][0])[0]
+        reciprocalRank = max(resultat.items(), key=lambda x: x[1][4][0])[0]
+        ndcg = max(resultat.items(), key=lambda x: x[1][5][0])[0]
+        print('\nLe modèle qui a la plus grande Precision a', k, 'est le', precision, 'pour, \nprecision =', resultat[precision][0][0], "en moyenne\net std =", resultat[precision][0][1])
+        print('\nLe modèle qui a le plus grand rappel a', k, 'est le', rappel, 'pour, \nrappel =', resultat[rappel][1][0], "en moyenne\net std =", resultat[rappel][1][1])
+        print('\nLe modèle qui a la plus grande fmesure a', k, 'avec beta =', beta,'est le', fmesure, 'pour, \nfmesure =', resultat[fmesure][2][0], "en moyenne\net std =", resultat[fmesure][2][1])
+        print('\nLe modèle qui a le plus grand avgP est le', avgP, 'pour, \navgP =', resultat[avgP][3][0], "en moyenne\net std =", resultat[avgP][3][1])
+        print('\nLe modèle qui a le plus grand reciprocalRank est le', reciprocalRank, 'pour, \nreciprocalRank =', resultat[reciprocalRank][4][0], "en moyenne\net std =", resultat[reciprocalRank][4][1])
+        print('\nLe modèle qui a le plus grand ndcg est le', ndcg, 'pour, \nndcg =', resultat[ndcg][5][0], "en moyenne\net std =", resultat[ndcg][5][1])
 
-        """
-        evaluation = [Eval.PrecisionAtK(self.k)
-            , Eval.RappelAtK(self.k)
-            , Eval.FMesureAtK(self.k, self.beta)
-            , Eval.AvgP()
-            , Eval.reciprocalRank()
-            , Eval.Ndcg()]
-        
-        """
+        return resultat

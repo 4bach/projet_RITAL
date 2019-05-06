@@ -148,5 +148,5 @@ if __name__ == "__main__":
     resultat = evalpageRank.evalModel()
     #print(resultat)
 
-    evalue = EvalIRModel.EvalAllIRModel(data)
+    evalue = EvalIRModel.EvalAllIRModel(data, findParametre=True)
     evalue.evalAllModel(5)
