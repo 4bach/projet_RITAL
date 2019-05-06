@@ -60,7 +60,7 @@ class EvalIRModel:
 
 class EvalAllIRModel:
 
-    def __init__(self, fichier, metrique="FMesure", tailleTrain=0.8):
+    def __init__(self, fichier, metrique="FMesure", tailleTrain=0.65):
 
         collection = Parser.Parser.buildDocCollectionSimple(fichier + '.txt', pageRank=True)
         self.collectionQry = Parser.Parser.buildQueryCollection(fichier)
@@ -77,14 +77,21 @@ class EvalAllIRModel:
 
         model = []
 
-        for m in modelIR:
-            for w in self.weighter:
-                model.append(m(w))
+        for w in self.weighter:
+            for m in range(len(modelIR)):
+                
+                if m == 1:  # pour le modèle Jelinek_Mercer
+                    jelinek = modelIR[m](w)
+                    jelinek.findParametreOptimaux(np.arange(0, 1.4, 0.1), self.train, metrique)
+                    model.append(jelinek)
+                elif m == 2:  # pour le modèle Okapi
+                    pass
+                else:  # pour le modèle Vectoriel
+                    model.append(modelIR[m](w))  # il n'y a pas de parametre a optimiser
 
         self.model = []
 
         for m in model:
-            m.findParametreOptimaux(np.arange(0, 1.4, 0.1), self.train, metrique)
             self.model.append(EvalIRModel(self.collectionQry, m))
             self.model.append(EvalIRModel(self.collectionQry, PageRank.PageRank(m.getWeighter(), m)))
 

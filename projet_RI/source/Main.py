@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     data = "../data/cacm/cacm"
 
-    collection = Parser.buildDocCollectionSimple(data, pageRank=True)
+    collection = Parser.buildDocCollectionSimple(data + ".txt", pageRank=True)
     index = IndexerSimple.IndexerSimple()
     index.indexation(collection)
     weighter = Weighter.Weighter1(index)

@@ -84,7 +84,7 @@ class Jelinek_Mercer(IRModel):
 
     def findParametreOptimaux(self, listeParametre, Queries, metrique="FMesure"):
         
-        metriquePossible = {"Precision":0,
+        metriquePossible = {"Precision":0,  # La liste des metriques possible
                     "Rappel":1,
                     "FMesure":2,
                     "AvgP":3,
@@ -141,6 +141,27 @@ class Okapi(IRModel):
     def setParametre(self, *args):
         self.k1 = args[0]
         self.b = args[1]
-
+        
+    def findParametreOptimaux(self, listeParametre1, listeParametre2, Queries, metrique="FMesure"):
+        
+        metriquePossible = {"Precision":0,  # La liste des metriques possible
+                    "Rappel":1,
+                    "FMesure":2,
+                    "AvgP":3,
+                    "reciprocalRank":4,
+                    "Ndcg":5}
+        
+        metrique = metriquePossible[metrique]
+        
+        evaluation = EvalIRModel.EvalIRModel(Queries, self)
+        
+        scoreEvaluation = []
+        for para in listeParametre:
+            self.setParametre(para)
+            scoreEvaluation.append(evaluation.evalModel())
+            
+        self.setParametre = listeParametre[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
+        
+    
     def __str__(self):
         return "Modèle Okapi, ou BM25, k1 = " + str(self.k1) + ", b = " + str(self.b) +'\nAvec ' + str(self.weighter)
