@@ -29,6 +29,9 @@ class IndexerSimple:
 
     def setTf(self, tf):
         self.tf = tf
+        
+    def getIndex(self):
+        return self.index
 
     def getTfsForDoc(self, iddoc):
         return self.index[iddoc]

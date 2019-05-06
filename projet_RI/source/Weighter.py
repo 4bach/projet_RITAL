@@ -5,6 +5,9 @@ class Weighter:
 
     def __init__(self, indexer):
         self.indexer = indexer
+        
+    def getIndex(self):
+        return self.indexer.getIndex()
 
     def getWeightsForDoc(self, idDoc):
         return self.indexer.getTfsForDoc(idDoc)

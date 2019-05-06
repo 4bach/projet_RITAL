@@ -13,7 +13,7 @@ class EvalIRModel:
     
     """
 
-    def __init__(self, fichierQry, modelIR, k=5, beta=0.5, tailleTrain=0.8,verbose=False):
+    def __init__(self, fichierQry, modelIR, k=5, beta=0.5, tailleTrain=0.8, verbose=False):
 
         self.verbose = verbose
         self.k = k
@@ -50,44 +50,6 @@ class EvalIRModel:
         self.print_verbose(resultat)
         return [(np.mean(l), np.std(l)) for l in resultat]
 
-    def findParametreOptimaux(self, *args):
-        # print(args)
-        if len(args) == 0 or len(args) > 3:
-            return
-        self.tailleTrain = int(self.tailleTrain * len(self.collectionQry))
-
-        train = dict()
-        for qry in self.collectionQry:
-            train[qry] = self.collectionQry[qry]
-            if len(train) > self.tailleTrain:
-                break
-
-        self.collectionQry = {k: v for k, v in self.collectionQry.items() if k not in train}
-
-        if len(args) == 1:  # Dans le Jelinek_Mercer
-            resultat = []
-            map = Eval.MAP()
-            for parametre in args[0]:
-                resultatModel = []
-                # print(parametre)
-                self.model.setParametre(parametre)
-                for query in train:
-                    resultatModel.append([resultat[0] for resultat in self.model.getRanking(train[query].getTexte())])
-
-                resultat.append(map.evalQueries(resultatModel, train))
-            # print(resultat)
-            # print(max(resultat))
-            # print(resultat.index(max(resultat)))
-            # print("args[0][resultat.index(max(resultat))] = ", args[0][resultat.index(max(resultat))])
-            self.model.setParametre(args[0][resultat.index(max(resultat))])
-
-        if len(args) == 2:  # Dans le cas Okapi
-            pass
-        if len(args) == 3:
-            pass
-
-        print(args[0])
-
     def print_verbose(self, *args, **kwargs):
         if self.verbose:
             print(*args, **kwargs)
@@ -98,10 +60,12 @@ class EvalIRModel:
 
 class EvalAllIRModel:
 
-    def __init__(self, fichier):
+    def __init__(self, fichier, metrique="FMesure", tailleTrain=0.8):
 
         collection = Parser.Parser.buildDocCollectionSimple(fichier + '.txt', pageRank=True)
-        collectionQry = Parser.Parser.buildQueryCollection(fichier)
+        self.collectionQry = Parser.Parser.buildQueryCollection(fichier)
+        self.train = dict()
+        self.separeTrainTest(tailleTrain)
 
         index = IndexerSimple.IndexerSimple()
         index.indexation(collection)
@@ -120,9 +84,20 @@ class EvalAllIRModel:
         self.model = []
 
         for m in model:
-            m.findParametreOptimaux(np.arange(0, 1.4, 0.1), collectionQry)
-            self.model.append(EvalIRModel(collectionQry, m))
-            self.model.append(EvalIRModel(collectionQry, PageRank.PageRank(m.getWeighter(), m)))
+            m.findParametreOptimaux(np.arange(0, 1.4, 0.1), self.train, metrique)
+            self.model.append(EvalIRModel(self.collectionQry, m))
+            self.model.append(EvalIRModel(self.collectionQry, PageRank.PageRank(m.getWeighter(), m)))
+
+    def separeTrainTest(self, tailleTrain=0.8):
+                
+        tailleTrain = int(tailleTrain * len(self.collectionQry))
+
+        for qry in self.collectionQry:
+            self.train[qry] = self.collectionQry[qry]
+            if len(self.train) > tailleTrain:
+                break
+
+        self.collectionQry = {k: v for k, v in self.collectionQry.items() if k not in self.train}
 
     def evalAllModel(self, k=1, beta=0.5):
 

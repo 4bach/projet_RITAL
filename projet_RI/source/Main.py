@@ -118,19 +118,21 @@ if __name__ == "__main__":
     # Q = Parser.buildQueryCollection('../data/cacm/cacm')
     # print(Q[10].getPertinents())
 
-    collection = Parser.buildDocCollectionSimple('../data/cisi/cisi.txt', pageRank=True)
+    data = "../data/cacm/cacm"
+
+    collection = Parser.buildDocCollectionSimple(data, pageRank=True)
     index = IndexerSimple.IndexerSimple()
     index.indexation(collection)
     weighter = Weighter.Weighter1(index)
     model = IRModel.Vectoriel(weighter)
-    eval = EvalIRModel.EvalIRModel('../data/cisi/cisi', model, k=5, verbose=False)
+    eval = EvalIRModel.EvalIRModel(data, model, k=5, verbose=False)
     resultat = eval.evalModel()
     #print(resultat)
 
     pr = PageRank.PageRank(weighter, model)
-    evalpageRank = EvalIRModel.EvalIRModel('../data/cisi/cisi', pr, k=5, verbose=False)
+    evalpageRank = EvalIRModel.EvalIRModel(data, pr, k=5, verbose=False)
     resultat = evalpageRank.evalModel()
     #print(resultat)
 
-    evalue = EvalIRModel.EvalAllIRModel('../data/cacm/cacm')
+    evalue = EvalIRModel.EvalAllIRModel(data)
     evalue.evalAllModel(5)

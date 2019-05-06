@@ -62,7 +62,6 @@ class Jelinek_Mercer(IRModel):
         self.lambda_ = lambda_
 
     def getScores(self, query):
-        print(self.lambda_)
         tailleCorpus = self.weighter.getLengthDocs()
         query = self.weighter.getWeightsForQuery(query)
 
