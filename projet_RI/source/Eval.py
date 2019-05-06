@@ -102,12 +102,21 @@ class MAP:
 
 
 class reciprocalRank(EvalMesure):
-
+    """
+        Calcule la reciprocalRank d'un resultat,
+    l'inverse du rang du resultat le plus pertinent pour la query
+    """
+    
     def evalQuery(self, liste, Query):
         return 1 / (1 + Query.getPertinents().index(liste[0])) if liste[0] in Query.getPertinents() else 0
 
 
 class Ndcg(EvalMesure):
+    """
+        Calcule la version normaliser du Dcg d'un resultat,
+    la somme de la pertinence des resultats, decroissant par le log du rang
+    """
+
 
     def evalQuery(self, liste, Query):
 
