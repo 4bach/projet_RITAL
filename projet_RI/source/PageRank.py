@@ -5,7 +5,7 @@ import random
 
 class PageRank(IRModel.IRModel):
 
-    def __init__(self, weighter, model, damping=0.8, n=10, k=1):
+    def __init__(self, weighter, model, damping=0.8, n=10, k=5):
 
         self.weighter = weighter
         self.model = model
@@ -34,6 +34,11 @@ class PageRank(IRModel.IRModel):
         return resultat
 
     def _initialiseGraphe(self, seed):
+        """
+            Fonction qui a partir des seed contruie le graphe que l'on va parcourir pour le pageRank
+        On ajoute tout les page qui sont directement pointer par les pages seed, et on rajoute self.k
+        page parmi toutes les pages qui pointe vers une page seed        
+        """
 
         graphe = dict()
 
