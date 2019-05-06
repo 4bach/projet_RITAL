@@ -69,9 +69,18 @@ class IndexerSimple:
         return sum(len(self.collection[doc].getTexte()) for doc in self.collection)
 
     def getHyperlinksFrom(self, idDoc):
+        """
+            Les liens des autres docs entrant pour un document ( utile pour PageRank )
+            return : une liste des docs entrants
+        """
         return self.collection[idDoc].getHyperlinksFrom()
 
     def getHyperlinksTo(self, idDoc):
+        """
+            Les liens des autres docs sortant pour un document ( utile pour PageRank )
+            return : un dictionnaire avec comme clés les documents avec lesquelles il a des liens.
+                                    avec comme valeur le nombre de lien vers ce doc
+        """
         return self.collection[idDoc].getHyperlinksTo()
 
     @staticmethod
@@ -87,6 +96,12 @@ class IndexerSimple:
         return TextRepresenter.PorterStemmer().getTextRepresentation(doc)
 
     def indexation(self, collection):
+        """
+            Construit simultanément l'index et l'index inversé ainsi que le tf idf à partir 
+            de la collection de documents.
+        
+        
+        """
         self.collection = collection
 
         index = dict()

@@ -110,6 +110,10 @@ class Parser:
 
     @staticmethod
     def buildQueryCollection(fichierQry, fichierRel=None):
+        """
+            On donne les fichiers query et rel en entrée et cette fonction en 
+            construit une collection
+        """
 
         if fichierRel is None:
             fichierRel = fichierQry + '.rel'
@@ -122,6 +126,9 @@ class Parser:
 
     @staticmethod
     def buildPertinenceQuery(collection, fichierRel):
+        """
+            Lit ligne par ligne et ajoute à un objet query sa liste de documents pertinants. 
+        """
 
         f = open(fichierRel, 'r')
         for ligne in f.readlines():  # Pour chaque ligne du fichier
