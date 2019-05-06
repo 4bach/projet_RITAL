@@ -85,9 +85,13 @@ class EvalAllIRModel:
                     jelinek.findParametreOptimaux(np.arange(0, 1.4, 0.1), self.train, metrique)
                     model.append(jelinek)
                 elif m == 2:  # pour le modèle Okapi
+                    #okapi = modelIR[m](w)
+                    #okapi.findParametreOptimaux(np.arange(0, 1.4, 0.3), np.arange(0.5, 2, 0.3), self.train, metrique)
+                    #model.append(okapi)
                     pass
                 else:  # pour le modèle Vectoriel
                     model.append(modelIR[m](w))  # il n'y a pas de parametre a optimiser
+                    model.append(modelIR[m](w,True))
 
         self.model = []
 

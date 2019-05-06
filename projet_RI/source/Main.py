@@ -17,6 +17,20 @@ if __name__ == "__main__":
     # ####    TME 1 - Indexation    ####
     D = Parser.buildDocCollectionSimple('../cacmShort-good.txt')
     print(D)
+   
+    indexer_simple = IndexerSimple.IndexerSimple()
+    indexer_simple.indexation(D)
+    w1 = Weighter.Weighter1(indexer_simple)
+    v1 = IRModel.Vectoriel(w1, True)
+
+    s1 = v1.getScores(qry)
+    sort = v1.getRanking(qry)
+    print("s1:",s1)
+    #
+    for t in sort:
+        print("doc:", t[0], " score:", t[1])
+    print()
+
     # # print("Texte du document 1 :", D[1].getTexte())
     # # print("Representation du même document :", PorterStemmer().getTextRepresentation(D[1].getTexte()))
     #

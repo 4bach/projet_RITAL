@@ -2,6 +2,8 @@ import operator
 import numpy as np
 import math
 import EvalIRModel
+import itertools
+import collections
 
 
 class IRModel:
@@ -38,9 +40,26 @@ class Vectoriel(IRModel):
         query = self.weighter.getWeightsForQuery(query)
 
         score = dict()
+        
 
         if self.normalized:
-            pass
+            """
+                Normalisation du doc.
+            """
+            doc_norm = collections.Counter()
+            for doc in self.weighter.getIndex():
+                n = self.weighter.getWeightsForDoc(doc)
+                for stem in n.keys():
+                    doc_norm[doc]+= n[stem]**2
+                doc_norm[doc] = np.sqrt(doc_norm[doc])
+            
+            """
+                Calcul du score cosinus.
+            """
+            for stem in query:
+                weights_stem = self.weighter.getWeightsForStem(stem)
+                for doc in weights_stem:
+                    score[doc] = score.get(doc,0) / (query[stem]**2 + doc_norm[doc])
 
         else:
             for stem in query:
@@ -155,12 +174,14 @@ class Okapi(IRModel):
         
         evaluation = EvalIRModel.EvalIRModel(Queries, self)
         
+        Parametres = list(itertools.product(listeParametre1,listeParametre2))
+        
         scoreEvaluation = []
-        for para in listeParametre:
-            self.setParametre(para)
+        for para in Parametres:
+            self.setParametre(*para)
             scoreEvaluation.append(evaluation.evalModel())
             
-        self.setParametre = listeParametre[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
+        self.setParametre = Parametres[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
         
     
     def __str__(self):
