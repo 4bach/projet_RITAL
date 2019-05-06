@@ -1,10 +1,11 @@
 import IRModel
+import EvalIRModel
 import random
 
 
 class PageRank(IRModel.IRModel):
 
-    def __init__(self, weighter, model, damping=0, n=10, k=1):
+    def __init__(self, weighter, model, damping=0.8, n=10, k=1):
 
         self.weighter = weighter
         self.model = model
@@ -12,30 +13,24 @@ class PageRank(IRModel.IRModel):
         self.n = n
         self.k = k
 
-    def getScores(self, Query, max_iter=50):
+    def getScores(self, Query, max_iter=200):
 
         seed = self.model.getRanking(Query)
         norm = sum([page[1] for page in seed[:min(self.n, len(seed))]])
         seed = {page[0]: (1 - self.d) * (page[1] / norm) for page in seed[:min(self.n, len(seed))]}
 
         graphe = self._initialiseGraphe(seed)
-        # print(len(graphe))
-        # print(len(seed))
         resultat = dict.fromkeys(graphe.keys(), 0)
+
         for _ in range(max_iter):
 
-            # print(resultat)
             for page in resultat:
-                # print('page =', page)
                 score = 0
 
                 for pageFrom in graphe[page]:
                     score += resultat.get(pageFrom, 0) / len(self.weighter.getHyperlinksTo(pageFrom))
-                # print(score)
                 resultat[page] = seed.get(page, 0) + (self.d * score)
 
-        # print(len(resultat))
-        # print(sum([resultat[i] for i in resultat]))
         return resultat
 
     def _initialiseGraphe(self, seed):
@@ -54,6 +49,42 @@ class PageRank(IRModel.IRModel):
                 graphe[i] = graphe.get(i, set()) | {idDoc}
 
         return graphe
+    
+    def setParametre(self, damping):
+        self.d = damping
+    
+    def findParametreOptimaux(self, listeParametre, Queries, metrique="FMesure"):
+        """
+           Optimise le parametre damping, en prenant la meuilleur valeur parmis les valeur de listeParametre
+           
+        :type listeParametre: list
+        :param listeParametre: liste qui contient les differentes valeurs pour le damping
+
+        :type Queries: dict = {id1: Query1, ...}
+        :param Queries: Le dictionnaire des query qui nous serve d'entrainement
+
+        :type metrique: String
+        :param metrique: La metrique que l'on veux utiliser       
+        """
+        
+        metriquePossible = {"Precision":0,  # La liste des metriques possible
+                    "Rappel":1,
+                    "FMesure":2,
+                    "AvgP":3,
+                    "reciprocalRank":4,
+                    "Ndcg":5}
+        
+        metrique = metriquePossible[metrique]
+
+        evaluation = EvalIRModel.EvalIRModel(Queries, self)
+        
+        scoreEvaluation = []
+        for para in listeParametre:
+            self.setParametre(para)
+            scoreEvaluation.append(evaluation.evalModel())
+        
+        
+        self.setParametre = listeParametre[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
 
     def __str__(self):
         return "Page Rank sur le " + str(self.model)
