@@ -17,6 +17,9 @@ class Parser:
         :type baliseText: String
         :param baliseText: La balise que l'on va utilier pour recuperer le texte, .T pour un doc, .W pour une requête
 
+        :type pageRank: boolean
+        :param pageRank: Un boollean qui nous indique si l'on doit se préoccuper des balise .X, ie si on travail avec un Document
+
         :return: Un dictionnaire de d'object Document, dont les clef sont les id des
                 Document.
                 {"id1": Document1, "id2": Document2, ...}

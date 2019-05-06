@@ -26,6 +26,10 @@ class Info:
 
 
 class Document(Info):
+    """
+        La classe qui permet de stocker un document, herite de la class Info,
+    possède des liens entre les documents 
+    """
 
     def __init__(self):
         super().__init__()
@@ -46,6 +50,11 @@ class Document(Info):
 
 
 class Query(Info):
+    """
+        La classe qui permet de stocker une Query, herite de la class Info,
+    possède une liste des resultat attendu pour la requête
+    """
+
 
     def __init__(self):
         super().__init__()

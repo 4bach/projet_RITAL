@@ -1,6 +1,7 @@
 import operator
 import numpy as np
 import math
+import EvalIRModel
 
 
 class IRModel:
@@ -22,7 +23,7 @@ class IRModel:
     def setParametre(self, *args):
         pass
 
-    def parametreOptimaux(self, *args):
+    def findParametreOptimaux(self, *args):
         pass
 
 
@@ -61,7 +62,7 @@ class Jelinek_Mercer(IRModel):
         self.lambda_ = lambda_
 
     def getScores(self, query):
-
+        print(self.lambda_)
         tailleCorpus = self.weighter.getLengthDocs()
         query = self.weighter.getWeightsForQuery(query)
 
@@ -79,14 +80,29 @@ class Jelinek_Mercer(IRModel):
 
         return score
 
-    def setParametre(self, *args):
-        print("lallalalala")
-        self.lambda_ = args[0]
-        print("self.lambda_ =", self.lambda_)
+    def setParametre(self, lambda_):
+        self.lambda_ = lambda_
 
-    def parametreOptimaux(self, *args):
-        print(args[0])
+    def findParametreOptimaux(self, listeParametre, Queries, metrique="FMesure"):
+        
+        metriquePossible = {"Precision":0,
+                    "Rappel":1,
+                    "FMesure":2,
+                    "AvgP":3,
+                    "reciprocalRank":4,
+                    "Ndcg":5}
+        
+        metrique = metriquePossible[metrique]
 
+        evaluation = EvalIRModel.EvalIRModel(Queries, self)
+        
+        scoreEvaluation = []
+        for para in listeParametre:
+            self.setParametre(para)
+            scoreEvaluation.append(evaluation.evalModel())
+            
+        self.setParametre = listeParametre[scoreEvaluation.index(max(scoreEvaluation, key=lambda x: x[metrique][0]))]
+        
     def __str__(self):
         return "Modèle Jelinek_Mercer, lambda = " + str(self.lambda_) + '\nAvec ' + str(self.weighter)
 

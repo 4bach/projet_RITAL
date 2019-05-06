@@ -9,6 +9,9 @@ import numpy as np
 
 
 class EvalIRModel:
+    """
+    
+    """
 
     def __init__(self, fichierQry, modelIR, k=5, beta=0.5, tailleTrain=0.8,verbose=False):
 
@@ -117,8 +120,8 @@ class EvalAllIRModel:
         self.model = []
 
         for m in model:
+            m.findParametreOptimaux(np.arange(0, 1.4, 0.1), collectionQry)
             self.model.append(EvalIRModel(collectionQry, m))
-            self.model[-1].findParametreOptimaux(np.arange(0.8, 2, 0.1))
             self.model.append(EvalIRModel(collectionQry, PageRank.PageRank(m.getWeighter(), m)))
 
     def evalAllModel(self, k=1, beta=0.5):
@@ -127,8 +130,11 @@ class EvalAllIRModel:
         for m in self.model:
             resultat[m] = m.evalModel(k, beta)
 
+
         precision = max(resultat.items(), key=lambda x: x[1][0][0])[0]
+        rappel = max(resultat.items(), key=lambda x: x[1][1][0])[0]
         print('Le modèle qui a la plus grande Precision a', k, 'est le', precision, 'pour, \nprecision =', resultat[precision][0][0], "en moyenne\net std =", resultat[precision][0][1])
+        print('Le modèle qui a le plus grand rappel a', k, 'est le', rappel, 'pour, \nrappel =', resultat[rappel][0][0], "en moyenne\net std =", resultat[rappel][0][1])
 
         """
         evaluation = [Eval.PrecisionAtK(self.k)
