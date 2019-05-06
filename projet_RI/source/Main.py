@@ -23,13 +23,13 @@ if __name__ == "__main__":
     w1 = Weighter.Weighter1(indexer_simple)
     v1 = IRModel.Vectoriel(w1, True)
 
-    s1 = v1.getScores(qry)
-    sort = v1.getRanking(qry)
-    print("s1:",s1)
+    #s1 = v1.getScores(qry)
+    #sort = v1.getRanking(qry)
+    #print("s1:",s1)
     #
-    for t in sort:
-        print("doc:", t[0], " score:", t[1])
-    print()
+    #for t in sort:
+    #    print("doc:", t[0], " score:", t[1])
+    #print()
 
     # # print("Texte du document 1 :", D[1].getTexte())
     # # print("Representation du même document :", PorterStemmer().getTextRepresentation(D[1].getTexte()))
@@ -148,5 +148,5 @@ if __name__ == "__main__":
     resultat = evalpageRank.evalModel()
     #print(resultat)
 
-    evalue = EvalIRModel.EvalAllIRModel(data, findParametre=True)
+    evalue = EvalIRModel.EvalAllIRModel(data, findParametre=True, tailleTrain=0.5)
     evalue.evalAllModel(5)

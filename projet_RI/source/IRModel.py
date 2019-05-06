@@ -53,7 +53,7 @@ class Vectoriel(IRModel):
                         
             norm_q = np.linalg.norm(np.array(list(query.values())),ord=2)
             for d in score : 
-                x = self.weighter.getWeightsForDoc(self.weighter.indexer.getCollection(d))
+                x = self.weighter.getWeightsForDoc(d)
                 norm_x = np.linalg.norm(np.array(list(x.values())),ord=2)
                 score[d] = score[d] / (np.sqrt(norm_x)+np.sqrt(norm_q))
         else:
