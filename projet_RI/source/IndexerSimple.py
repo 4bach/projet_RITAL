@@ -30,6 +30,9 @@ class IndexerSimple:
     def setTf(self, tf):
         self.tf = tf
         
+    def getCollection(self,d):
+        return self.collection[d]
+        
     def getIndex(self):
         return self.index
 

@@ -43,24 +43,19 @@ class Vectoriel(IRModel):
         
 
         if self.normalized:
-            """
-                Normalisation du doc.
-            """
-            doc_norm = collections.Counter()
-            for doc in self.weighter.getIndex():
-                n = self.weighter.getWeightsForDoc(doc)
-                for stem in n.keys():
-                    doc_norm[doc]+= n[stem]**2
-                doc_norm[doc] = np.sqrt(doc_norm[doc])
-            
-            """
-                Calcul du score cosinus.
-            """
-            for stem in query:
-                weights_stem = self.weighter.getWeightsForStem(stem)
-                for doc in weights_stem:
-                    score[doc] = score.get(doc,0) + (query[stem]**2/ (query[stem]**2 + doc_norm[doc]))
-
+            for stem in query : 
+                docs = self.weighter.getWeightsForStem(stem)
+                for d in docs : 
+                    if d not in score:
+                        score[d] = docs[d] * query[stem]
+                    else:
+                        score[d] += docs[d] * query[stem]
+                        
+            norm_q = np.linalg.norm(np.array(list(query.values())),ord=2)
+            for d in score : 
+                x = self.weighter.getWeightsForDoc(self.weighter.indexer.getCollection(d))
+                norm_x = np.linalg.norm(np.array(list(x.values())),ord=2)
+                score[d] = score[d] / (np.sqrt(norm_x)+np.sqrt(norm_q))
         else:
             for stem in query:
                 weights_stem = self.weighter.getWeightsForStem(stem)

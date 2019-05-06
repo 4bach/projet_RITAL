@@ -35,6 +35,7 @@ class Weighter:
 
     def getHyperlinksTo(self, idDoc):
         return self.indexer.getHyperlinksTo(idDoc)
+    
 
 
 class Weighter1(Weighter):
