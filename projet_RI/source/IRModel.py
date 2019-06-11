@@ -3,7 +3,6 @@ import numpy as np
 import math
 import EvalIRModel
 import itertools
-import collections
 
 
 class IRModel:
@@ -87,8 +86,6 @@ class Jelinek_Mercer(IRModel):
             weights_stem = self.weighter.getWeightsForStem(stem)
 
             for doc in weights_stem:
-                # print("doc =",doc)
-                # print("self.weighter.getLengthDoc(doc) =",self.weighter.getLengthDoc(doc))
                 score[doc] = score.get(doc, 0) + (self.lambda_ * (weights_stem[doc] / self.weighter.getLengthDoc(doc))) + tf_total
 
         return score
@@ -97,6 +94,18 @@ class Jelinek_Mercer(IRModel):
         self.lambda_ = lambda_
 
     def findParametreOptimaux(self, listeParametre, Queries, metrique="FMesure"):
+        """
+           Optimise le parametre lambda, en prenant la meuilleur valeur parmis les valeur de listeParametre
+           
+        :type listeParametre: list
+        :param listeParametre: liste qui contient les differentes valeurs pour le lambda
+
+        :type Queries: dict = {id1: Query1, ...}
+        :param Queries: Le dictionnaire des query qui nous serve d'entrainement
+
+        :type metrique: String
+        :param metrique: La metrique que l'on veux utiliser       
+        """
         
         metriquePossible = {"Precision":0,  # La liste des metriques possible
                     "Rappel":1,
@@ -140,7 +149,6 @@ class Okapi(IRModel):
 
             docWithStem = self.weighter.getTfsForStem(stem)
             nStem = len(docWithStem)
-            # idfStem = math.log((N - nStem + 0.5) / (nStem + 0.5))
             if nStem > 0:
                 idfStem = math.log(N / nStem)
 
@@ -157,6 +165,18 @@ class Okapi(IRModel):
         self.b = args[1]
         
     def findParametreOptimaux(self, listeParametre1, listeParametre2, Queries, metrique="FMesure"):
+        """
+           Optimise les parametres k1 et b, en prenant la meuilleur combinaison de valeur parmis les valeurs de listeParametre 1 et 2
+            
+        :type listeParametre{1,2}: list
+        :param listeParametre{1,2}: liste qui contient les differentes valeurs pour le lambda
+
+        :type Queries: dict = {id1: Query1, ...}
+        :param Queries: Le dictionnaire des query qui nous serve d'entrainement
+
+        :type metrique: String
+        :param metrique: La metrique que l'on veux utiliser       
+        """
         
         metriquePossible = {"Precision":0,  # La liste des metriques possible
                     "Rappel":1,

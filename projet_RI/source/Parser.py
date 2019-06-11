@@ -62,9 +62,6 @@ class Parser:
                 linkFrom[fromId] = linkFrom.get(fromId, []) + [lireID]
 
         f.close()
-        # print('resultat =', resultat)
-        # print('len(resultat) =', len(resultat))
-        # print('linkFrom =', linkFrom)
 
         if not pageRank:
             return resultat
